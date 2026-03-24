@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import ContactForm from '../components/ContactForm.astro'
+---
+
+<BaseLayout
+  titre="Contact — Devis gratuit | Escale et Goûts"
+  description="Contactez Escale et Goûts pour un devis gratuit de conciergerie Airbnb. Réponse sous 24h. Zones : Vienne (38), Saint-Priest (69), Annonay (07), sud Lyon."
+>
+
+  <!-- Header page -->
+  <section class="bg-navy pt-24 pb-16">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <p class="text-gold text-xs font-bold tracking-widest uppercase mb-3">Parlons de votre projet</p>
+      <h1 class="font-serif text-4xl md:text-5xl text-white mb-4">Obtenez votre devis gratuit</h1>
+      <p class="text-white/50 leading-relaxed max-w-xl mx-auto">
+        Remplissez le formulaire ci-dessous et recevez une réponse personnalisée sous 24h. Sans engagement, sans surprise.
+      </p>
+    </div>
+  </section>
+
+  <!-- Formulaire + infos contact -->
+  <section class="bg-cream py-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="grid md:grid-cols-3 gap-10">
+
+        <!-- Infos contact (1/3) -->
+        <div class="md:col-span-1 space-y-6">
+
+          <div>
+            <p class="text-gold text-xs font-bold tracking-widest uppercase mb-4">Nous contacter</p>
+            <div class="space-y-4">
+
+              <div class="flex gap-3 items-start">
+                <span class="text-2xl">📧</span>
+                <div>
+                  <p class="text-navy font-semibold text-sm">Email</p>
+                  <a
+                    href="mailto:escaleetgouts@gmail.com"
+                    class="text-text/60 text-sm hover:text-gold transition-colors"
+                  >
+                    escaleetgouts@gmail.com
+                  </a>
+                </div>
+              </div>
+
+              <div class="flex gap-3 items-start">
+                <span class="text-2xl">📍</span>
+                <div>
+                  <p class="text-navy font-semibold text-sm">Zone d'intervention</p>
+                  <p class="text-text/60 text-sm">Vienne (38) · Saint-Priest (69)<br>Annonay (07) · Sud Lyon</p>
+                </div>
+              </div>
+
+              <div class="flex gap-3 items-start">
+                <span class="text-2xl">⏱️</span>
+                <div>
+                  <p class="text-navy font-semibold text-sm">Délai de réponse</p>
+                  <p class="text-text/60 text-sm">Sous 24h en jours ouvrés</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Garanties -->
+          <div class="bg-white rounded-2xl p-5 border border-navy/5">
+            <p class="text-navy font-semibold text-sm mb-3">Ce que vous obtenez</p>
+            <ul class="space-y-2">
+              {[
+                'Évaluation gratuite du potentiel Airbnb',
+                'Estimation des revenus nets',
+                'Proposition sur-mesure',
+                'Aucun engagement',
+              ].map(item => (
+                <li class="flex gap-2 items-start text-text/60 text-sm">
+                  <span class="text-gold font-bold">✓</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Formulaire (2/3) -->
+        <div class="md:col-span-2">
+          <ContactForm />
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Mentions légales / RGPD note -->
+  <section class="bg-white py-8">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <p class="text-text/30 text-xs">
+        Les informations recueillies via ce formulaire sont utilisées uniquement pour traiter votre demande de devis.
+        Elles ne sont pas transmises à des tiers. Conformément au RGPD, vous pouvez exercer vos droits en écrivant à
+        <a href="mailto:escaleetgouts@gmail.com" class="underline hover:text-navy transition-colors">escaleetgouts@gmail.com</a>.
+      </p>
+    </div>
+  </section>
+
+</BaseLayout>

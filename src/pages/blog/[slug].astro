@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getCollection, render } from 'astro:content'
+
+export async function getStaticPaths() {
+  const articles = await getCollection('blog', e => e.data.publie)
+  return articles.map(article => ({
+    params: { slug: article.id },
+    props: { article },
+  }))
+}
+
+const { article } = Astro.props
+const { titre, description, date, image, tags } = article.data
+const { Content } = await render(article)
+
+function formatDate(d: Date) {
+  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+---
+
+<BaseLayout
+  titre={`${titre} — Escale et Goûts`}
+  description={description}
+  image={image}
+  type="article"
+>
+
+  <!-- Header article -->
+  <section class="bg-navy pt-20 pb-14">
+    <div class="max-w-3xl mx-auto px-4">
+      <div class="flex flex-wrap gap-2 mb-4 justify-center">
+        {tags.map(tag => (
+          <span class="bg-white/10 text-white/70 text-xs px-3 py-1 rounded-full border border-white/15">{tag}</span>
+        ))}
+      </div>
+      <h1 class="font-serif text-3xl md:text-4xl text-white text-center mb-4">{titre}</h1>
+      <p class="text-white/40 text-sm text-center">
+        Publié le <time datetime={date.toISOString()}>{formatDate(date)}</time>
+      </p>
+    </div>
+  </section>
+
+  {image && (
+    <div class="max-w-3xl mx-auto px-4 -mt-6">
+      <img
+        src={image}
+        alt={titre}
+        class="w-full h-64 object-cover rounded-2xl shadow-lg"
+        loading="eager"
+      />
+    </div>
+  )}
+
+  <!-- Contenu de l'article -->
+  <section class="bg-cream py-14">
+    <div class="max-w-3xl mx-auto px-4">
+      <article class="
+        prose prose-sm md:prose
+        prose-headings:font-serif prose-headings:text-navy
+        prose-p:text-text/70 prose-p:leading-relaxed
+        prose-a:text-gold prose-a:no-underline hover:prose-a:underline
+        prose-li:text-text/70
+        prose-strong:text-navy
+        max-w-none
+      ">
+        <Content />
+      </article>
+    </div>
+  </section>
+
+  <!-- CTA bas d'article -->
+  <section class="bg-navy py-14">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <p class="text-gold text-xs font-bold tracking-widest uppercase mb-3">Passez à l'action</p>
+      <h2 class="font-serif text-2xl text-white mb-4">Confier votre logement à Escale et Goûts</h2>
+      <p class="text-white/50 text-sm mb-7">Devis personnalisé sous 24h · Sans engagement · 22% TTC tout inclus</p>
+      <a
+        href="/contact/"
+        class="inline-block bg-gold text-navy font-bold px-10 py-4 rounded-full hover:bg-gold-light transition-colors"
+      >
+        Demander mon devis →
+      </a>
+    </div>
+  </section>
+
+  <!-- Retour au blog -->
+  <section class="bg-cream py-8">
+    <div class="max-w-3xl mx-auto px-4">
+      <a href="/blog/" class="text-navy/50 text-sm hover:text-gold transition-colors">← Retour au blog</a>
+    </div>
+  </section>
+
+</BaseLayout>

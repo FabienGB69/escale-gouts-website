@@ -1,0 +1,225 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import ContactForm from '../../components/ContactForm.astro'
+import EstimateurGain from '../../components/EstimateurGain.astro'
+import { getCollection } from 'astro:content'
+
+export async function getStaticPaths() {
+  const zones = await getCollection('zones')
+  return zones.map(zone => ({
+    params: { ville: zone.data.slug },
+    props: { zone },
+  }))
+}
+
+const { zone } = Astro.props
+const { titre_seo, description, h1, ville, departement, image } = zone.data
+
+// Logements dans cette ville (correspondance approximative)
+const logements = await getCollection('logements', l =>
+  l.data.actif && l.data.ville.toLowerCase().includes(ville.toLowerCase())
+)
+
+// Données spécifiques à chaque ville pour enrichir la page
+const contextes: Record<string, { atouts: string[], cible: string, saisonNote: string }> = {
+  vienne: {
+    atouts: ['Festival de Jazz de Vienne (juin–juillet)', 'Sites gallo-romains (tourisme culturel)', 'Proximité A7 — 30 min de Lyon', 'Centre-ville piéton animé'],
+    cible: 'Touristes culturels, voyageurs d\'affaires Lyon-Vienne, familles',
+    saisonNote: 'Forte saisonnalité en été (Jazz festival) mais demande pro régulière toute l\'année.',
+  },
+  'saint-priest': {
+    atouts: ['Zone industrielle et technologique majeure', 'Siège d\'entreprises internationales', 'Accès direct autoroute A43', 'Aéroport Saint-Exupéry à 15 min'],
+    cible: 'Voyageurs d\'affaires, techniciens en mission, cadres en déplacement',
+    saisonNote: 'Demande soutenue et régulière toute l\'année, pic lors des salons professionnels.',
+  },
+  annonay: {
+    atouts: ['Porte de l\'Ardèche verte', 'Tourisme nature et randonnée', 'Ville de Montgolfier — patrimoine industriel', 'Calme et authenticité ardéchoise'],
+    cible: 'Randonneurs, familles, tourisme vert, voyageurs en transit',
+    saisonNote: 'Pic estival (juillet–août), bonne fréquentation week-ends de printemps.',
+  },
+  'sud-lyon': {
+    atouts: ['Proximité immédiate de Lyon', 'Accès A7 et autoroutes sud', 'Quartiers résidentiels recherchés', 'Alternative moins chère au centre de Lyon'],
+    cible: 'Voyageurs visitant Lyon, familles, touristes, professionnels',
+    saisonNote: 'Demande très régulière grâce au rayonnement de Lyon, toute l\'année.',
+  },
+}
+
+const contexte = contextes[zone.data.slug] ?? {
+  atouts: ['Forte demande locative locale', 'Clientèle mixte tourisme et affaires', 'Accès aux grandes agglomérations'],
+  cible: 'Touristes et voyageurs professionnels',
+  saisonNote: 'Bonne activité toute l\'année.',
+}
+
+// JSON-LD LocalBusiness spécifique à cette ville
+const localSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'Escale et Goûts Conciergerie',
+  description: `Conciergerie Airbnb à ${ville}${departement ? ` (${departement})` : ''} — gestion complète de vos locations courte durée.`,
+  url: `https://www.escaleetgouts.fr/conciergerie/${zone.data.slug}/`,
+  telephone: '',
+  email: 'escaleetgouts@gmail.com',
+  areaServed: { '@type': 'City', name: ville },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: ville,
+    addressRegion: departement ?? 'Auvergne-Rhône-Alpes',
+    addressCountry: 'FR',
+  },
+  priceRange: '22% TTC',
+  openingHours: 'Mo-Su 00:00-23:59',
+}
+---
+
+<BaseLayout
+  titre={titre_seo}
+  description={description}
+  localSchema={localSchema}
+>
+
+  <!-- Hero spécifique ville -->
+  <section class="bg-navy pt-24 pb-16">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center">
+        <p class="text-gold text-xs font-bold tracking-widest uppercase mb-3">
+          Conciergerie Airbnb · {ville}{departement ? ` (${departement})` : ''}
+        </p>
+        <h1 class="font-serif text-4xl md:text-5xl text-white mb-5" set:html={h1} />
+        <p class="text-white/55 max-w-2xl mx-auto leading-relaxed mb-8">{description}</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href="/contact/"
+            class="bg-gold text-navy font-bold px-8 py-4 rounded-full hover:bg-gold-light transition-colors"
+          >
+            Devis gratuit pour {ville} →
+          </a>
+          <a
+            href="/services-conciergerie/"
+            class="border-2 border-white/30 text-white/80 font-semibold px-8 py-4 rounded-full hover:border-white hover:text-white transition-colors"
+          >
+            Nos services
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contexte local -->
+  <section class="bg-cream py-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-10">
+
+        <div>
+          <p class="text-gold text-xs font-bold tracking-widest uppercase mb-3">Pourquoi {ville} ?</p>
+          <h2 class="font-serif text-2xl text-navy mb-5">Le potentiel locatif de votre secteur</h2>
+          <ul class="space-y-3 mb-6">
+            {contexte.atouts.map(a => (
+              <li class="flex gap-3 items-start">
+                <span class="text-gold font-bold mt-0.5">→</span>
+                <span class="text-text/70 text-sm">{a}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="bg-white rounded-xl p-4 border border-navy/5">
+            <p class="text-navy font-semibold text-sm mb-1">Clientèle principale</p>
+            <p class="text-text/60 text-sm">{contexte.cible}</p>
+          </div>
+          <div class="bg-white rounded-xl p-4 border border-navy/5 mt-3">
+            <p class="text-navy font-semibold text-sm mb-1">Note saisonnière</p>
+            <p class="text-text/60 text-sm">{contexte.saisonNote}</p>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-gold text-xs font-bold tracking-widest uppercase mb-3">Notre intervention</p>
+          <h2 class="font-serif text-2xl text-navy mb-5">Ce que nous gérons à {ville}</h2>
+          <div class="space-y-3">
+            {[
+              ['🔑', 'Check-in & check-out personnalisé'],
+              ['🧹', 'Ménage professionnel entre chaque séjour'],
+              ['📸', 'Optimisation de votre annonce Airbnb'],
+              ['💬', 'Communication voyageurs 7j/7'],
+              ['🔧', 'Suivi et petite maintenance'],
+              ['📊', 'Reporting mensuel détaillé'],
+            ].map(([icon, label]) => (
+              <div class="flex gap-3 items-center bg-white rounded-xl px-4 py-3 border border-navy/5">
+                <span class="text-xl">{icon}</span>
+                <span class="text-text/70 text-sm font-medium">{label}</span>
+              </div>
+            ))}
+          </div>
+          <div class="mt-4 bg-navy rounded-xl p-4 text-center">
+            <p class="text-white/60 text-xs mb-1">Commission unique tout inclus</p>
+            <p class="font-serif text-3xl text-gold font-bold">22% TTC</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Estimateur centré sur cette ville -->
+  <section class="bg-white py-6 px-4">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-4">
+        <h2 class="font-serif text-2xl text-navy">Estimez vos revenus à {ville}</h2>
+      </div>
+      <EstimateurGain />
+    </div>
+  </section>
+
+  <!-- Logements locaux (si existants) -->
+  {logements.length > 0 && (
+    <section class="bg-cream py-16">
+      <div class="max-w-5xl mx-auto px-4">
+        <h2 class="font-serif text-2xl text-navy mb-8 text-center">Logements gérés à {ville}</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+          {logements.map(l => (
+            <div class="bg-white rounded-2xl p-5 border border-navy/10">
+              <p class="text-gold text-xs uppercase tracking-wider font-bold mb-1">{l.data.ville}</p>
+              <h3 class="font-serif text-navy text-lg font-semibold">{l.data.titre}</h3>
+              <p class="text-text/60 text-sm mt-1">{l.data.capacite} voyageurs · {l.data.superficie ?? '?'} m²</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Formulaire de contact ciblé -->
+  <section class="bg-navy py-20">
+    <div class="max-w-2xl mx-auto px-4">
+      <div class="text-center mb-10">
+        <p class="text-gold text-xs font-bold tracking-widest uppercase mb-3">Propriétaire à {ville} ?</p>
+        <h2 class="font-serif text-3xl text-white mb-3">Parlons de votre logement</h2>
+        <p class="text-white/50 text-sm">Réponse sous 24h · Devis 100% gratuit · Sans engagement</p>
+      </div>
+      <ContactForm />
+    </div>
+  </section>
+
+  <!-- Liens vers autres zones -->
+  <section class="bg-cream py-12">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <p class="text-text/40 text-sm mb-5">Nous intervenons aussi sur :</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        {[
+          {label:'Vienne (38)', href:'/conciergerie/vienne/'},
+          {label:'Saint-Priest (69)', href:'/conciergerie/saint-priest/'},
+          {label:'Annonay (07)', href:'/conciergerie/annonay/'},
+          {label:'Sud Lyon', href:'/conciergerie/sud-lyon/'},
+        ]
+        .filter(l => !l.href.includes(zone.data.slug))
+        .map(l => (
+          <a
+            href={l.href}
+            class="border border-navy/20 text-navy/70 px-5 py-2 rounded-full text-sm hover:border-gold hover:text-gold transition-colors"
+          >
+            {l.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

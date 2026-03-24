@@ -1,0 +1,259 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/Hero.astro'
+import EstimateurGain from '../components/EstimateurGain.astro'
+import LogementCard from '../components/LogementCard.astro'
+import TestimonialCard from '../components/TestimonialCard.astro'
+import { getCollection } from 'astro:content'
+
+const logements   = (await getCollection('logements', e => e.data.actif)).sort((a,b) => a.data.ordre - b.data.ordre).slice(0,3)
+const temoignages = (await getCollection('temoignages')).sort((a,b) => a.data.ordre - b.data.ordre).slice(0,3)
+
+const services = [
+  { icon: '🔑', titre: 'Check-in & check-out',        desc: 'Accueil personnalisé, remise des clés, état des lieux à chaque rotation.' },
+  { icon: '🧹', titre: 'Ménage professionnel',         desc: 'Nettoyage complet, linge de maison qualité hôtelière entre chaque séjour.' },
+  { icon: '📸', titre: 'Optimisation Airbnb',          desc: 'Photos pro, annonce optimisée, tarification dynamique multi-plateformes.' },
+  { icon: '💬', titre: 'Gestion des voyageurs',        desc: 'Communication 7j/7, sélection des profils, gestion des avis.' },
+  { icon: '🔧', titre: 'Maintenance & suivi',          desc: 'Inspection régulière, petites réparations, coordination des intervenants.' },
+  { icon: '📊', titre: 'Reporting mensuel',            desc: 'Compte-rendu détaillé : revenus, taux d\'occupation, recommandations.' },
+]
+
+const zones = [
+  { ville: 'Vienne',       dept: '38', slug: 'vienne',       desc: 'Ville historique, forte demande touristique et pro.' },
+  { ville: 'Saint-Priest', dept: '69', slug: 'saint-priest', desc: 'Zone industrielle, clientèle d\'affaires régulière.' },
+  { ville: 'Annonay',      dept: '07', slug: 'annonay',      desc: 'Ardèche nord, tourisme nature et voyageurs en transit.' },
+  { ville: 'Sud Lyon',     dept: '69', slug: 'sud-lyon',     desc: 'Périphérie lyonnaise, demande soutenue toute l\'année.' },
+]
+---
+
+<BaseLayout
+  titre="Conciergerie Airbnb Sud Lyon — Escale et Goûts"
+  description="Conciergerie Airbnb professionnelle sur Vienne (38), Saint-Priest (69), Annonay (07) et le sud de Lyon. Check-in, ménage, gestion complète. Devis gratuit."
+>
+
+  <!-- ═══════════════════════════ HERO SPLIT ═══════════════════════════ -->
+  <Hero
+    fond="split"
+    sousTitre="Conciergerie Airbnb · Sud Lyon"
+    titre="Votre logement,<br>notre expertise"
+    texte="Escale et Goûts gère vos locations courte durée de A à Z — check-in, ménage, voyageurs, Airbnb. Vous percevez les revenus. Nous gérons le reste."
+    cta1Texte="Obtenir mon devis gratuit"
+    cta1Href="/contact/"
+    cta2Texte="Découvrir nos services"
+    cta2Href="/services-conciergerie/"
+    image="/images/hero-interieur.jpg"
+    imageAlt="Intérieur d'un logement géré par Escale et Goûts"
+  />
+
+  <!-- ══════════════════════ CHIFFRES CLÉS ══════════════════════ -->
+  <section class="bg-navy py-0">
+    <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
+      {[
+        { val: '22%',      label: 'Commission TTC\ntout inclus' },
+        { val: '75%',      label: 'Taux d\'occupation\nmoyen atteint' },
+        { val: '7j/7',     label: 'Disponibilité\npour vos voyageurs' },
+        { val: '< 24h',    label: 'Délai de réponse\nà votre demande' },
+      ].map(c => (
+        <div class="py-10 px-6 text-center">
+          <p class="font-serif text-gold text-4xl lg:text-5xl font-light">{c.val}</p>
+          <p class="font-sans text-white/40 text-xs mt-2 leading-relaxed whitespace-pre-line">{c.label}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ══════════════════════ NOS SERVICES — éditorial ══════════════════════ -->
+  <section class="bg-cream py-24">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+
+      <div class="grid md:grid-cols-2 gap-16 items-start">
+
+        <!-- Bloc intro gauche -->
+        <div class="md:sticky md:top-24">
+          <span class="label-luxury text-gold block mb-4">Ce que nous faisons</span>
+          <span class="divider-gold mb-6"></span>
+          <h2 class="font-serif text-4xl lg:text-5xl text-navy leading-tight mb-6">
+            Une gestion complète,<br>
+            <em class="text-coral not-italic">sans vous déranger</em>
+          </h2>
+          <p class="font-sans text-text/55 text-sm leading-relaxed max-w-sm mb-8">
+            De la première photo Airbnb au ménage après le départ, nous prenons en charge chaque étape pour que votre logement performe au maximum.
+          </p>
+          <a
+            href="/services-conciergerie/"
+            class="inline-flex items-center gap-3 font-sans text-xs font-semibold tracking-widest uppercase text-navy border-b border-navy/20 pb-1 hover:border-coral hover:text-coral transition-colors"
+          >
+            Voir le détail des prestations
+            <span>→</span>
+          </a>
+        </div>
+
+        <!-- Grille services droite -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-px bg-navy/8">
+          {services.map((s, i) => (
+            <div class="bg-cream p-7 hover:bg-cream-dark transition-colors group">
+              <span class="text-2xl block mb-3">{s.icon}</span>
+              <h3 class="font-serif text-navy text-lg font-semibold mb-2 group-hover:text-coral transition-colors">
+                {s.titre}
+              </h3>
+              <p class="font-sans text-text/50 text-xs leading-relaxed">{s.desc}</p>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ ESTIMATEUR ══════════════════════ -->
+  <section class="bg-navy py-20 px-6" id="estimateur">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="label-luxury text-gold/60 block mb-3">Simulateur</span>
+        <h2 class="font-serif text-4xl text-white">Estimez vos revenus</h2>
+      </div>
+      <EstimateurGain />
+    </div>
+  </section>
+
+  <!-- ══════════════════════ LOGEMENTS — grille ══════════════════════ -->
+  {logements.length > 0 && (
+    <section class="bg-cream-dark py-24">
+      <div class="max-w-6xl mx-auto px-6 lg:px-10">
+
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
+          <div>
+            <span class="label-luxury text-gold block mb-3">Notre portefeuille</span>
+            <h2 class="font-serif text-4xl text-navy">Logements gérés</h2>
+          </div>
+          <a
+            href="/logements-geres/"
+            class="font-sans text-xs font-semibold tracking-widest uppercase text-navy border-b border-navy/20 pb-1 hover:border-coral hover:text-coral transition-colors self-start md:self-auto"
+          >
+            Voir tous →
+          </a>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          {logements.map(l => <LogementCard logement={l} />)}
+        </div>
+
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════════════ SPLIT PROMO — style image rebrand ══════════════════════ -->
+  <section class="grid md:grid-cols-2">
+
+    <!-- Photo gauche -->
+    <div class="relative min-h-64 bg-navy overflow-hidden">
+      <div class="absolute inset-0 flex items-center justify-center">
+        <!-- Placeholder élégant jusqu'à avoir la vraie photo -->
+        <div class="text-center px-10">
+          <p class="font-serif text-white/15 text-8xl font-light">"</p>
+          <p class="font-serif text-white/60 text-xl italic leading-relaxed">
+            Nouvelle identité,<br>même exigence
+          </p>
+          <span class="divider-gold mx-auto mt-6"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Texte droite -->
+    <div class="bg-cream flex flex-col justify-center px-10 lg:px-16 py-16">
+      <span class="label-luxury text-gold block mb-4">Notre histoire</span>
+      <h2 class="font-serif text-3xl lg:text-4xl text-navy mb-5 leading-tight">
+        Anciennement Feliada BNB Services,<br>
+        <em class="text-coral not-italic">aujourd'hui Escale et Goûts</em>
+      </h2>
+      <span class="divider-gold mb-5"></span>
+      <p class="font-sans text-text/55 text-sm leading-relaxed mb-8 max-w-sm">
+        Une nouvelle identité, une promesse renforcée : accompagner les propriétaires du sud lyonnais avec exigence, transparence et une vraie connaissance du terrain.
+      </p>
+      <a
+        href="/a-propos/"
+        class="inline-flex items-center gap-3 font-sans text-xs font-semibold tracking-widest uppercase text-navy border-b border-navy/20 pb-1 hover:border-coral hover:text-coral transition-colors self-start"
+      >
+        Notre histoire
+        <span>→</span>
+      </a>
+    </div>
+
+  </section>
+
+  <!-- ══════════════════════ TÉMOIGNAGES ══════════════════════ -->
+  {temoignages.length > 0 && (
+    <section class="bg-cream py-24">
+      <div class="max-w-6xl mx-auto px-6 lg:px-10">
+
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
+          <div>
+            <span class="label-luxury text-gold block mb-3">Ils nous font confiance</span>
+            <h2 class="font-serif text-4xl text-navy">Ce que disent<br>nos propriétaires</h2>
+          </div>
+          <a
+            href="/temoignages/"
+            class="font-sans text-xs font-semibold tracking-widest uppercase text-navy border-b border-navy/20 pb-1 hover:border-coral hover:text-coral transition-colors self-start md:self-auto"
+          >
+            Tous les avis →
+          </a>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          {temoignages.map(t => <TestimonialCard temoignage={t} />)}
+        </div>
+
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════════════ ZONES — cartes épurées ══════════════════════ -->
+  <section class="bg-navy py-24">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+
+      <div class="text-center mb-14">
+        <span class="label-luxury text-gold/60 block mb-3">Zone d'intervention</span>
+        <h2 class="font-serif text-4xl text-white">Nous intervenons<br>dans votre secteur</h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5">
+        {zones.map(z => (
+          <a
+            href={`/conciergerie/${z.slug}/`}
+            class="group bg-navy px-8 py-10 hover:bg-navy-light transition-colors"
+          >
+            <p class="label-luxury text-gold/50 group-hover:text-gold transition-colors mb-3">{z.dept}</p>
+            <h3 class="font-serif text-white text-2xl font-light mb-3 group-hover:text-gold transition-colors">{z.ville}</h3>
+            <span class="divider-gold mb-4 block group-hover:w-full transition-all"></span>
+            <p class="font-sans text-white/35 text-xs leading-relaxed">{z.desc}</p>
+          </a>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════ CTA FINAL ══════════════════════ -->
+  <section class="bg-cream py-28">
+    <div class="max-w-2xl mx-auto px-6 text-center">
+      <span class="label-luxury text-gold block mb-5">Prêt à déléguer ?</span>
+      <h2 class="font-serif text-5xl text-navy mb-3 leading-tight">
+        Confiez-nous<br>
+        <em class="text-coral not-italic">votre logement</em>
+      </h2>
+      <span class="divider-gold mx-auto mb-8"></span>
+      <p class="font-sans text-text/50 text-sm mb-10 leading-relaxed">
+        Un échange de 15 minutes suffit pour évaluer le potentiel de votre bien et vous proposer un devis personnalisé. Sans engagement.
+      </p>
+      <a
+        href="/contact/"
+        class="inline-flex items-center gap-3 font-sans text-xs font-semibold tracking-widest uppercase bg-navy text-white px-12 py-5 hover:bg-coral transition-colors"
+      >
+        Demander mon devis gratuit
+        <span>→</span>
+      </a>
+      <p class="font-sans text-text/25 text-xs mt-5">Sans engagement · Réponse sous 24h · 100% gratuit</p>
+    </div>
+  </section>
+
+</BaseLayout>

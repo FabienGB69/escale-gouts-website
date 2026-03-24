@@ -1,0 +1,41 @@
+---
+interface Props {
+  temoignage: {
+    data: {
+      nom:       string
+      ville:     string
+      note:      number
+      type_bien?: string
+      texte:     string
+    }
+  }
+}
+const { temoignage } = Astro.props
+const { nom, ville, note, type_bien, texte } = temoignage.data
+const etoiles = '★'.repeat(note) + '☆'.repeat(5 - note)
+---
+
+<blockquote class="bg-white rounded-2xl p-7 shadow-sm border border-navy/5 flex flex-col gap-4">
+  <!-- Étoiles -->
+  <div class="text-gold text-xl tracking-wide" aria-label={`Note : ${note}/5`}>
+    {etoiles}
+  </div>
+
+  <!-- Texte -->
+  <p class="text-text/80 text-base leading-relaxed italic">
+    "{texte}"
+  </p>
+
+  <!-- Auteur -->
+  <footer class="flex items-center gap-3 mt-2">
+    <div class="w-10 h-10 rounded-full bg-navy/10 flex items-center justify-center text-navy font-bold text-sm flex-shrink-0">
+      {nom.charAt(0).toUpperCase()}
+    </div>
+    <div>
+      <p class="font-semibold text-navy text-sm">{nom}</p>
+      <p class="text-text/50 text-xs">
+        Propriétaire · {ville}{type_bien ? ` · ${type_bien}` : ''}
+      </p>
+    </div>
+  </footer>
+</blockquote>

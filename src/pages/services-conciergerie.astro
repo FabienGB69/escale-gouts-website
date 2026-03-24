@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/Hero.astro'
+import ContactForm from '../components/ContactForm.astro'
+
+const prestations = [
+  {
+    id: 'checkin',
+    icon: '🔑',
+    titre: 'Check-in & check-out personnalisé',
+    points: [
+      'Accueil chaleureux de vos voyageurs sur place',
+      'Remise des clés et visite du logement',
+      'Présentation du quartier et des bonnes adresses',
+      'État des lieux à l\'arrivée et au départ',
+      'Gestion des remises de clés à distance (boîte à clés sécurisée)',
+    ],
+  },
+  {
+    id: 'menage',
+    icon: '🧹',
+    titre: 'Ménage & linge de maison',
+    points: [
+      'Nettoyage complet entre chaque rotation',
+      'Linge de lit et de salle de bain de qualité hôtelière',
+      'Réassort des consommables (café, thé, produits d\'accueil)',
+      'Contrôle qualité après chaque prestation',
+      'Signalement des anomalies en temps réel',
+    ],
+  },
+  {
+    id: 'airbnb',
+    icon: '📸',
+    titre: 'Optimisation Airbnb & Booking',
+    points: [
+      'Photographie professionnelle de votre logement',
+      'Rédaction d\'annonce optimisée SEO (titre, description)',
+      'Tarification dynamique selon la saison et les événements locaux',
+      'Gestion multi-plateformes (Airbnb, Booking, VRBO)',
+      'Synchronisation du calendrier pour éviter les doublons',
+    ],
+  },
+  {
+    id: 'voyageurs',
+    icon: '💬',
+    titre: 'Gestion des voyageurs',
+    points: [
+      'Réponse aux messages 7j/7 en français et anglais',
+      'Sélection des locataires et vérification des profils',
+      'Gestion des demandes spéciales et imprévus',
+      'Résolution des litiges avec Airbnb si nécessaire',
+      'Collecte et gestion des avis voyageurs',
+    ],
+  },
+  {
+    id: 'maintenance',
+    icon: '🔧',
+    titre: 'Maintenance & suivi du logement',
+    points: [
+      'Inspection régulière de l\'état du bien',
+      'Petites réparations courantes incluses',
+      'Coordination avec vos artisans ou les nôtres',
+      'Signalement photographique des dommages',
+      'Suivi des équipements (wifi, électroménager, etc.)',
+    ],
+  },
+  {
+    id: 'reporting',
+    icon: '📊',
+    titre: 'Reporting & transparence',
+    points: [
+      'Compte-rendu mensuel détaillé par email',
+      'Suivi des revenus et du taux d\'occupation',
+      'Récapitulatif des dépenses engagées',
+      'Recommandations d\'amélioration',
+      'Accès à vos données à tout moment',
+    ],
+  },
+]
+---
+
+<BaseLayout
+  titre="Services de conciergerie Airbnb — Escale et Goûts"
+  description="Découvrez les services de conciergerie Airbnb d'Escale et Goûts : check-in, ménage, gestion voyageurs, optimisation Airbnb. Tarif : 22% TTC tout inclus."
+>
+
+  <Hero
+    fond="navy"
+    titre="Nos services de conciergerie"
+    sousTitre="22% TTC · Tout inclus · Sans surprise"
+    texte="Escale et Goûts prend en charge l'intégralité de votre location courte durée. Un seul interlocuteur, une commission claire, zéro contrainte pour vous."
+    cta1Texte="Demander un devis"
+    cta1Href="/contact/"
+    cta2Texte="Simuler mes revenus"
+    cta2Href="/#estimateur"
+  />
+
+  <!-- Tarif mis en avant -->
+  <section class="bg-cream py-14">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <div class="bg-white rounded-3xl shadow-sm p-10 border border-navy/5">
+        <p class="text-gold text-xs font-bold tracking-widest uppercase mb-3">Notre modèle tarifaire</p>
+        <p class="font-serif text-5xl text-navy font-bold mb-2">22% TTC</p>
+        <p class="text-text/50 text-sm mb-6">de commission sur les revenus générés · Aucun frais fixe · Aucune surprise</p>
+        <div class="grid md:grid-cols-3 gap-4 text-left mt-6">
+          <div class="flex gap-3 items-start">
+            <span class="text-gold text-lg">✓</span>
+            <span class="text-text/70 text-sm">Toutes les prestations incluses</span>
+          </div>
+          <div class="flex gap-3 items-start">
+            <span class="text-gold text-lg">✓</span>
+            <span class="text-text/70 text-sm">Pas de frais si logement vide</span>
+          </div>
+          <div class="flex gap-3 items-start">
+            <span class="text-gold text-lg">✓</span>
+            <span class="text-text/70 text-sm">Contrat résiliable à tout moment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Détail des prestations -->
+  <section class="bg-white py-20">
+    <div class="max-w-5xl mx-auto px-4">
+
+      <div class="text-center mb-14">
+        <p class="text-gold text-xs font-bold tracking-widest uppercase mb-2">En détail</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-navy">Ce qui est inclus dans les 22%</h2>
+      </div>
+
+      <div class="space-y-10">
+        {prestations.map((p, i) => (
+          <div class={`flex flex-col md:flex-row gap-8 items-start ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
+            <div class="md:w-1/3 flex-shrink-0">
+              <div class="bg-cream rounded-2xl p-6 text-center">
+                <div class="text-5xl mb-3">{p.icon}</div>
+                <h3 class="font-serif text-navy text-xl font-semibold">{p.titre}</h3>
+              </div>
+            </div>
+            <div class="md:w-2/3">
+              <ul class="space-y-3">
+                {p.points.map(point => (
+                  <li class="flex gap-3 items-start">
+                    <span class="text-gold font-bold mt-0.5">→</span>
+                    <span class="text-text/70 text-sm leading-relaxed">{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ rapide -->
+  <section class="bg-cream py-16">
+    <div class="max-w-3xl mx-auto px-4">
+      <h2 class="font-serif text-2xl text-navy text-center mb-10">Questions fréquentes</h2>
+      <div class="space-y-4">
+        {[
+          {
+            q: 'Combien de logements gérez-vous minimum ?',
+            r: 'Nous acceptons dès le premier logement. Aucun minimum requis.'
+          },
+          {
+            q: 'Faut-il signer un contrat long terme ?',
+            r: 'Non. Notre contrat est résiliable avec un préavis d\'un mois. Nous misons sur la qualité pour vous fidéliser.'
+          },
+          {
+            q: 'Intervenez-vous aussi pour les logements meublés longue durée ?',
+            r: 'Notre spécialité est la courte durée (Airbnb, Booking). Pour la longue durée, contactez-nous et nous étudierons votre cas.'
+          },
+          {
+            q: 'Les frais de ménage sont-ils inclus dans les 22% ?',
+            r: 'Oui, la coordination et le suivi sont inclus. Les frais de prestataire ménage sont facturés en transparence ou répercutés sur les frais de ménage voyageur.'
+          },
+        ].map(faq => (
+          <details class="bg-white rounded-2xl p-5 border border-navy/5 group cursor-pointer">
+            <summary class="font-semibold text-navy text-sm list-none flex justify-between items-center">
+              {faq.q}
+              <span class="text-gold text-lg group-open:rotate-45 transition-transform inline-block">+</span>
+            </summary>
+            <p class="text-text/60 text-sm mt-3 leading-relaxed">{faq.r}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA form -->
+  <section class="bg-navy py-20">
+    <div class="max-w-2xl mx-auto px-4">
+      <div class="text-center mb-10">
+        <p class="text-gold text-xs font-bold tracking-widest uppercase mb-3">Démarrons ensemble</p>
+        <h2 class="font-serif text-3xl text-white mb-3">Obtenez votre devis gratuit</h2>
+        <p class="text-white/50 text-sm">Réponse personnalisée sous 24h, sans engagement.</p>
+      </div>
+      <ContactForm />
+    </div>
+  </section>
+
+</BaseLayout>

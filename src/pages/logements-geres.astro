@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/Hero.astro'
+import LogementCard from '../components/LogementCard.astro'
+import { getCollection } from 'astro:content'
+
+const logements = (await getCollection('logements', e => e.data.actif))
+  .sort((a, b) => a.data.ordre - b.data.ordre)
+
+const villes = [...new Set(logements.map(l => l.data.ville))]
+---
+
+<BaseLayout
+  titre="Logements gérés — Escale et Goûts Conciergerie"
+  description="Découvrez les appartements et maisons gérés par Escale et Goûts sur Vienne, Saint-Priest, Annonay et le sud de Lyon."
+>
+
+  <Hero
+    fond="cream"
+    titre="Nos logements gérés"
+    texte="Appartements et maisons de propriétaires qui nous font confiance pour maximiser leurs revenus locatifs en courte durée."
+    cta1Texte="Confier mon logement"
+    cta1Href="/contact/"
+  />
+
+  <section class="bg-cream py-16">
+    <div class="max-w-6xl mx-auto px-4">
+
+      {logements.length === 0 ? (
+        <!-- État vide : en cours de constitution du portefeuille -->
+        <div class="text-center py-20">
+          <div class="text-6xl mb-6">🏠</div>
+          <h2 class="font-serif text-2xl text-navy mb-4">Notre portefeuille se constitue</h2>
+          <p class="text-text/60 max-w-md mx-auto mb-8">
+            Nous accueillons actuellement nos premiers propriétaires partenaires. Votre logement pourrait être ici.
+          </p>
+          <a
+            href="/contact/"
+            class="inline-block bg-gold text-navy font-bold px-8 py-3 rounded-full hover:bg-gold-light transition-colors"
+          >
+            Proposer mon logement →
+          </a>
+        </div>
+      ) : (
+        <>
+          <!-- Filtre par ville (si plusieurs villes) -->
+          {villes.length > 1 && (
+            <div class="flex flex-wrap gap-3 mb-10 justify-center" id="filtres">
+              <button
+                class="filtre-btn active px-5 py-2 rounded-full text-sm font-semibold border-2 border-navy bg-navy text-white transition-all"
+                data-filtre="tous"
+              >
+                Tous ({logements.length})
+              </button>
+              {villes.map(v => (
+                <button
+                  class="filtre-btn px-5 py-2 rounded-full text-sm font-semibold border-2 border-navy/20 text-navy/60 hover:border-navy hover:text-navy transition-all"
+                  data-filtre={v}
+                >
+                  {v} ({logements.filter(l => l.data.ville === v).length})
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="logements-grid">
+            {logements.map(l => (
+              <div class="logement-item" data-ville={l.data.ville}>
+                <LogementCard logement={l} />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+    </div>
+  </section>
+
+  <!-- Encart "Vous avez un logement ?" -->
+  <section class="bg-navy py-16">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <p class="text-gold text-xs font-bold tracking-widest uppercase mb-3">Propriétaire ?</p>
+      <h2 class="font-serif text-3xl text-white mb-4">Votre logement mérite mieux</h2>
+      <p class="text-white/50 text-sm mb-8 max-w-lg mx-auto">
+        Rejoignez nos propriétaires partenaires et confiez-nous la gestion complète de votre bien. Devis personnalisé sous 24h.
+      </p>
+      <a
+        href="/contact/"
+        class="inline-block bg-gold text-navy font-bold px-10 py-4 rounded-full hover:bg-gold-light transition-colors"
+      >
+        Nous contacter →
+      </a>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<script>
+  const btns = document.querySelectorAll<HTMLButtonElement>('.filtre-btn')
+  const items = document.querySelectorAll<HTMLElement>('.logement-item')
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filtre = btn.dataset.filtre!
+      btns.forEach(b => {
+        b.classList.remove('active', 'bg-navy', 'text-white', 'border-navy')
+        b.classList.add('border-navy/20', 'text-navy/60')
+      })
+      btn.classList.add('active', 'bg-navy', 'text-white', 'border-navy')
+      btn.classList.remove('border-navy/20', 'text-navy/60')
+
+      items.forEach(item => {
+        if (filtre === 'tous' || item.dataset.ville === filtre) {
+          item.style.display = ''
+        } else {
+          item.style.display = 'none'
+        }
+      })
+    })
+  })
+</script>

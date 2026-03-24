@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/Hero.astro'
+import TestimonialCard from '../components/TestimonialCard.astro'
+import { getCollection } from 'astro:content'
+
+const temoignages = (await getCollection('temoignages')).sort((a,b) => a.data.ordre - b.data.ordre)
+const notesMoyenne = temoignages.length
+  ? (temoignages.reduce((acc, t) => acc + t.data.note, 0) / temoignages.length).toFixed(1)
+  : '5.0'
+---
+
+<BaseLayout
+  titre="Témoignages propriétaires — Escale et Goûts"
+  description="Découvrez ce que disent les propriétaires qui confient leur logement à Escale et Goûts Conciergerie. Avis vérifiés, gestion courte durée Lyon."
+>
+
+  <Hero
+    fond="navy"
+    titre="Ils nous font confiance"
+    texte="Des propriétaires qui ont choisi de déléguer pour gagner du temps et des revenus. Voici ce qu'ils en pensent."
+    cta1Texte="Rejoindre nos propriétaires"
+    cta1Href="/contact/"
+  />
+
+  <!-- Note globale -->
+  {temoignages.length > 0 && (
+    <section class="bg-cream py-12">
+      <div class="max-w-lg mx-auto px-4 text-center">
+        <div class="bg-white rounded-2xl shadow-sm p-8 border border-navy/5">
+          <p class="text-gold text-4xl font-serif font-bold">{notesMoyenne} / 5</p>
+          <div class="flex justify-center gap-1 my-2 text-gold text-xl">
+            {'★★★★★'.split('').map(s => <span>{s}</span>)}
+          </div>
+          <p class="text-text/50 text-sm">Note moyenne · {temoignages.length} avis propriétaires</p>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Grille témoignages -->
+  <section class="bg-cream py-10 pb-20">
+    <div class="max-w-5xl mx-auto px-4">
+
+      {temoignages.length === 0 ? (
+        <div class="text-center py-20">
+          <div class="text-6xl mb-6">⭐</div>
+          <h2 class="font-serif text-2xl text-navy mb-4">Les premiers avis arrivent bientôt</h2>
+          <p class="text-text/60 max-w-md mx-auto mb-8">
+            Nous venons de lancer notre activité. Revenez très vite pour découvrir les retours de nos propriétaires.
+          </p>
+          <a href="/contact/" class="inline-block bg-gold text-navy font-bold px-8 py-3 rounded-full hover:bg-gold-light transition-colors">
+            Être parmi les premiers →
+          </a>
+        </div>
+      ) : (
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {temoignages.map(t => <TestimonialCard temoignage={t} />)}
+        </div>
+      )}
+
+    </div>
+  </section>
+
+  <!-- CTA bas de page -->
+  <section class="bg-navy py-16">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <h2 class="font-serif text-3xl text-white mb-4">Prêt à rejoindre nos propriétaires ?</h2>
+      <p class="text-white/50 text-sm mb-8">Devis personnalisé sous 24h, sans engagement.</p>
+      <a href="/contact/" class="inline-block bg-gold text-navy font-bold px-10 py-4 rounded-full hover:bg-gold-light transition-colors">
+        Demander mon devis gratuit →
+      </a>
+    </div>
+  </section>
+
+</BaseLayout>

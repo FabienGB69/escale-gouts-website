@@ -1,0 +1,79 @@
+/* ═══════════════════════════════════════════════════════
+   Google Fonts — Cormorant Garamond (titres) + Inter (corps)
+   Inspiré de l'identité visuelle Escale et Goûts
+═══════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  /* ── Palette ── */
+  --color-navy:       #1B2E5E;
+  --color-navy-light: #2a4080;
+  --color-gold:       #C9983A;
+  --color-gold-light: #E0B050;
+  --color-cream:      #FAF6EF;
+  --color-cream-dark: #F0EBE1;
+  --color-coral:      #C94A2A;   /* Corail plus soutenu (comme le heading de l'image) */
+  --color-coral-light:#E05A3A;
+  --color-text:       #2C2C2C;
+  --color-text-light: #6B6B6B;
+
+  /* ── Typographie ── */
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans:  'Inter', 'Arial', Helvetica, sans-serif;
+
+  /* ── Letter spacing ── */
+  --tracking-luxury: 0.18em;
+  --tracking-wide: 0.12em;
+}
+
+/* ── Base ── */
+html { scroll-behavior: smooth; }
+body {
+  background-color: var(--color-cream);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Hiérarchie typographique ── */
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+/* Label "luxury" — petites caps espacées (catégories, surtitres) */
+.label-luxury {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-luxury);
+  text-transform: uppercase;
+}
+
+/* Titre display corail (gros titres comme dans l'image) */
+.titre-coral {
+  color: var(--color-coral);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  line-height: 1.0;
+}
+
+/* Séparateur élégant */
+.divider-gold {
+  width: 40px;
+  height: 2px;
+  background-color: var(--color-gold);
+  display: block;
+}
+
+/* ── Animations légères ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.6s ease forwards; }

@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Hero from '../../components/Hero.astro'
+import { getCollection } from 'astro:content'
+
+const articles = (await getCollection('blog', e => e.data.publie))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+
+function formatDate(d: Date) {
+  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+---
+
+<BaseLayout
+  titre="Blog conciergerie Airbnb — Escale et Goûts"
+  description="Conseils et guides pour optimiser votre location Airbnb sur Vienne (38), Saint-Priest (69), Annonay (07) et le sud de Lyon."
+>
+
+  <Hero
+    fond="navy"
+    titre="Blog & conseils"
+    texte="Guides pratiques pour maximiser vos revenus Airbnb et réussir votre location courte durée dans le sud lyonnais."
+    cta1Texte="Nous contacter"
+    cta1Href="/contact/"
+  />
+
+  <section class="bg-cream py-16">
+    <div class="max-w-5xl mx-auto px-4">
+
+      {articles.length === 0 ? (
+        <div class="text-center py-20">
+          <div class="text-6xl mb-6">✍️</div>
+          <h2 class="font-serif text-2xl text-navy mb-4">Les articles arrivent bientôt</h2>
+          <p class="text-text/60 max-w-md mx-auto">
+            Nous préparons des guides sur la location courte durée dans le sud lyonnais. Revenez très vite !
+          </p>
+        </div>
+      ) : (
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {articles.map(article => (
+            <article class="bg-white rounded-2xl overflow-hidden border border-navy/5 hover:shadow-lg transition-shadow group">
+              {article.data.image && (
+                <div class="h-44 overflow-hidden bg-cream">
+                  <img
+                    src={article.data.image}
+                    alt={article.data.titre}
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+              <div class="p-6">
+                <div class="flex flex-wrap gap-2 mb-3">
+                  {article.data.tags.slice(0,2).map(tag => (
+                    <span class="bg-cream text-navy text-xs px-3 py-1 rounded-full border border-navy/10">{tag}</span>
+                  ))}
+                </div>
+                <h2 class="font-serif text-navy text-xl font-semibold mb-2 group-hover:text-gold transition-colors leading-snug">
+                  <a href={`/blog/${article.id}/`}>{article.data.titre}</a>
+                </h2>
+                <p class="text-text/55 text-sm mb-4 line-clamp-3">{article.data.description}</p>
+                <div class="flex items-center justify-between">
+                  <time class="text-text/35 text-xs">{formatDate(article.data.date)}</time>
+                  <a
+                    href={`/blog/${article.id}/`}
+                    class="text-gold text-sm font-semibold hover:underline"
+                  >
+                    Lire →
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+
+    </div>
+  </section>
+
+</BaseLayout>

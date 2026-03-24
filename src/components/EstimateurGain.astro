@@ -1,0 +1,173 @@
+---
+// Taux de frais de gestion Escale et Goûts
+const FRAIS_TTC = 22
+---
+
+<section class="bg-navy rounded-3xl p-8 md:p-12 my-16 mx-auto max-w-3xl">
+  <div class="text-center mb-8">
+    <p class="text-gold text-xs font-bold tracking-widest uppercase mb-2">
+      Simulateur gratuit
+    </p>
+    <h2 class="text-white font-serif text-3xl md:text-4xl mb-3">
+      Estimez vos revenus locatifs
+    </h2>
+    <p class="text-white/55 text-sm max-w-xl mx-auto">
+      Découvrez ce que vous pourriez gagner avec une gestion professionnelle.
+      Frais de gestion : <strong class="text-gold">{FRAIS_TTC}% TTC</strong>.
+    </p>
+  </div>
+
+  <!-- Inputs -->
+  <div class="grid md:grid-cols-2 gap-4 mb-6">
+
+    <div>
+      <label class="block text-white/65 text-sm mb-1.5" for="est-ville">
+        Ville du logement
+      </label>
+      <select id="est-ville"
+        class="w-full bg-white/10 text-white border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-gold transition-colors">
+        <option value="85">Vienne (38)</option>
+        <option value="78">Saint-Priest (69)</option>
+        <option value="72" selected>Sud Lyon</option>
+        <option value="65">Annonay (07)</option>
+        <option value="72">Autre</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-white/65 text-sm mb-1.5" for="est-type">
+        Type de logement
+      </label>
+      <select id="est-type"
+        class="w-full bg-white/10 text-white border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-gold transition-colors">
+        <option value="0.85">Studio / T1</option>
+        <option value="1.00" selected>T2</option>
+        <option value="1.30">T3</option>
+        <option value="1.65">T4 et plus</option>
+      </select>
+    </div>
+
+    <div class="md:col-span-2">
+      <label class="block text-white/65 text-sm mb-1.5" for="est-prix">
+        Prix par nuit estimé :
+        <span id="est-prix-label" class="text-gold font-bold">72 €</span>
+      </label>
+      <input
+        id="est-prix" type="range" min="30" max="250" value="72" step="5"
+        class="w-full h-2 rounded-full cursor-pointer accent-gold"
+      />
+      <div class="flex justify-between text-white/30 text-xs mt-1">
+        <span>30 €</span>
+        <span>150 €</span>
+        <span>250 €</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Résultats -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+
+    <!-- Sans conciergerie -->
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
+      <p class="text-white/45 text-xs uppercase tracking-wider mb-3">Sans conciergerie</p>
+      <p id="res-sans" class="text-white text-2xl font-bold font-serif">—</p>
+      <p class="text-white/35 text-xs mt-2">~55% d'occupation / an</p>
+    </div>
+
+    <!-- Avec Escale et Goûts -->
+    <div class="relative bg-gold/10 border-2 border-gold rounded-2xl p-5 text-center">
+      <div class="absolute -top-3.5 left-0 right-0 flex justify-center">
+        <span class="bg-gold text-navy text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+          Avec Escale et Goûts
+        </span>
+      </div>
+      <p class="text-white/45 text-xs uppercase tracking-wider mb-3 mt-1">Revenu net propriétaire</p>
+      <p id="res-avec" class="text-gold text-2xl font-bold font-serif">—</p>
+      <p class="text-white/35 text-xs mt-2">~75% d'occupation, frais {FRAIS_TTC}% déduits</p>
+    </div>
+
+    <!-- Gain -->
+    <div id="gain-box" class="bg-white/5 border border-white/10 rounded-2xl p-5 text-center transition-colors">
+      <p class="text-white/45 text-xs uppercase tracking-wider mb-3">Gain annuel net</p>
+      <p id="res-gain" class="text-2xl font-bold font-serif text-white">—</p>
+      <p class="text-white/35 text-xs mt-2">+ votre temps libéré</p>
+    </div>
+
+  </div>
+
+  <!-- Détail -->
+  <p id="res-detail" class="hidden text-center text-white/35 text-xs mt-4">
+    Revenu brut géré : <span id="res-brut" class="text-white/50"></span> /an ·
+    Frais Escale et Goûts : <span id="res-frais" class="text-white/50"></span> /an
+  </p>
+
+  <!-- CTA -->
+  <div class="mt-10 text-center">
+    <a
+      href="/contact/"
+      class="inline-block bg-gold text-navy font-bold px-9 py-4 rounded-full hover:bg-gold-light transition-colors text-base"
+    >
+      Obtenir mon devis gratuit →
+    </a>
+    <p class="text-white/30 text-xs mt-3">Sans engagement · Réponse sous 24h</p>
+  </div>
+</section>
+
+<script define:vars={{ FRAIS_TTC }}>
+  const FRAIS    = FRAIS_TTC / 100    // 0.22
+  const OCC_SANS = 0.55               // sans gestion pro
+  const OCC_AVEC = 0.75               // avec Escale et Goûts
+
+  const fmt = (n) =>
+    new Intl.NumberFormat('fr-FR', {
+      style: 'currency', currency: 'EUR', maximumFractionDigits: 0,
+    }).format(n)
+
+  function calcul() {
+    const prixVille = parseInt(document.getElementById('est-ville').value)
+    const typeCoef  = parseFloat(document.getElementById('est-type').value)
+    const slider    = document.getElementById('est-prix')
+    const prixNuit  = parseInt(slider.value)
+
+    document.getElementById('est-prix-label').textContent = prixNuit + ' €'
+
+    // Calculs
+    const revenuSans  = Math.round(prixNuit * 365 * OCC_SANS)
+    const revenuBrut  = Math.round(prixNuit * 365 * OCC_AVEC)
+    const frais       = Math.round(revenuBrut * FRAIS)
+    const revenuAvec  = revenuBrut - frais
+    const gain        = revenuAvec - revenuSans
+
+    // Affichage
+    document.getElementById('res-sans').textContent  = fmt(revenuSans) + '/an'
+    document.getElementById('res-avec').textContent  = fmt(revenuAvec) + '/an'
+    document.getElementById('res-gain').textContent  = (gain >= 0 ? '+' : '') + fmt(gain) + '/an'
+    document.getElementById('res-brut').textContent  = fmt(revenuBrut)
+    document.getElementById('res-frais').textContent = fmt(frais)
+    document.getElementById('res-detail').classList.remove('hidden')
+
+    // Couleur du gain
+    const gainEl  = document.getElementById('res-gain')
+    const gainBox = document.getElementById('gain-box')
+    if (gain >= 0) {
+      gainEl.className  = 'text-2xl font-bold font-serif text-green-400'
+      gainBox.classList.add('border-green-500/30', 'bg-green-900/20')
+      gainBox.classList.remove('bg-white/5', 'border-white/10')
+    } else {
+      gainEl.className  = 'text-2xl font-bold font-serif text-red-400'
+      gainBox.classList.remove('border-green-500/30', 'bg-green-900/20')
+      gainBox.classList.add('bg-white/5', 'border-white/10')
+    }
+  }
+
+  // Sync prix sur changement de ville
+  document.getElementById('est-ville').addEventListener('change', (e) => {
+    document.getElementById('est-prix').value = e.target.value
+    calcul()
+  })
+  document.getElementById('est-type').addEventListener('change', calcul)
+  document.getElementById('est-prix').addEventListener('input', calcul)
+
+  calcul() // init
+</script>

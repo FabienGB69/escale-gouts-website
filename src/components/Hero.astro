@@ -1,0 +1,178 @@
+---
+interface Props {
+  titre:       string       // HTML autorisé (ex: "Titre<br>Suite")
+  sousTitre?:  string       // Surtitre (label catégorie au-dessus)
+  texte?:      string       // Paragraphe descriptif
+  cta1Texte?:  string
+  cta1Href?:   string
+  cta2Texte?:  string
+  cta2Href?:   string
+  fond?:       'navy' | 'cream' | 'split' | 'image'
+  image?:      string       // URL photo (si fond='split' ou 'image')
+  imageAlt?:   string
+}
+
+const {
+  titre,
+  sousTitre,
+  texte,
+  cta1Texte = 'Devis gratuit',
+  cta1Href  = '/contact/',
+  cta2Texte,
+  cta2Href,
+  fond  = 'navy',
+  image,
+  imageAlt = '',
+} = Astro.props
+
+const isSplit = fond === 'split'
+const isDark  = fond === 'navy' || fond === 'image'
+---
+
+{isSplit ? (
+  <!-- ══════════════════ MODE SPLIT — Inspiré de l'image de rebrand ══════════════════ -->
+  <section class="grid md:grid-cols-2 min-h-[90vh]">
+
+    <!-- Colonne texte gauche -->
+    <div class="flex flex-col justify-center px-10 lg:px-20 py-20 bg-cream order-2 md:order-1">
+
+      {sousTitre && (
+        <span class="label-luxury text-gold mb-5 block">{sousTitre}</span>
+      )}
+
+      <h1
+        class="titre-coral text-5xl md:text-6xl lg:text-7xl leading-none mb-6"
+        set:html={titre}
+      />
+
+      <span class="divider-gold mb-6"></span>
+
+      {texte && (
+        <p class="font-sans text-text/65 text-base leading-relaxed max-w-md mb-10">{texte}</p>
+      )}
+
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a
+          href={cta1Href}
+          class="inline-flex items-center justify-center bg-navy text-white font-sans font-semibold text-sm px-8 py-4 hover:bg-navy-light transition-colors tracking-wide"
+        >
+          {cta1Texte}
+        </a>
+        {cta2Texte && cta2Href && (
+          <a
+            href={cta2Href}
+            class="inline-flex items-center justify-center border border-navy/30 text-navy font-sans font-semibold text-sm px-8 py-4 hover:border-navy transition-colors tracking-wide"
+          >
+            {cta2Texte}
+          </a>
+        )}
+      </div>
+    </div>
+
+    <!-- Colonne photo droite -->
+    <div class="relative min-h-[50vh] md:min-h-full order-1 md:order-2 overflow-hidden">
+      {image ? (
+        <img
+          src={image}
+          alt={imageAlt || titre}
+          class="absolute inset-0 w-full h-full object-cover"
+        />
+      ) : (
+        <!-- Placeholder élégant navy avec motif -->
+        <div class="absolute inset-0 bg-navy flex items-center justify-center">
+          <div class="text-center">
+            <p class="font-serif text-white/20 text-7xl font-light tracking-widest">E&G</p>
+            <p class="label-luxury text-gold/50 mt-4">Escale et Goûts</p>
+          </div>
+        </div>
+      )}
+      <!-- Overlay subtil en bas -->
+      <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-navy/20 to-transparent" />
+      <!-- Badge marque sur la photo -->
+      <div class="absolute bottom-6 right-6">
+        <div class="bg-cream/90 backdrop-blur-sm px-4 py-2 text-center">
+          <p class="font-serif text-navy text-xs tracking-widest uppercase">Escale</p>
+          <p class="label-luxury text-gold text-[9px]">Et Goûts</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+) : (
+  <!-- ══════════════════ MODE STANDARD (navy / cream / image) ══════════════════ -->
+  <section
+    class:list={[
+      'relative overflow-hidden py-24 md:py-32 px-6',
+      fond === 'navy'  && 'bg-navy',
+      fond === 'cream' && 'bg-cream',
+      fond === 'image' && 'bg-navy',
+    ]}
+  >
+    {image && fond === 'image' && (
+      <div class="absolute inset-0 z-0">
+        <img src={image} alt="" class="w-full h-full object-cover opacity-20" />
+        <div class="absolute inset-0 bg-navy/75" />
+      </div>
+    )}
+
+    <div class="relative z-10 max-w-4xl mx-auto text-center fade-up">
+
+      {sousTitre && (
+        <span class:list={[
+          'label-luxury block mb-5',
+          isDark ? 'text-gold' : 'text-gold',
+        ]}>
+          {sousTitre}
+        </span>
+      )}
+
+      <span class="divider-gold mx-auto mb-6"></span>
+
+      <h1
+        class:list={[
+          'font-serif font-semibold text-4xl md:text-5xl lg:text-6xl leading-tight mb-6',
+          isDark ? 'text-white' : 'text-navy',
+        ]}
+        set:html={titre}
+      />
+
+      {texte && (
+        <p class:list={[
+          'text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-12',
+          isDark ? 'text-white/65' : 'text-text/60',
+        ]}>
+          {texte}
+        </p>
+      )}
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href={cta1Href}
+          class:list={[
+            'inline-flex items-center justify-center font-sans font-semibold text-sm px-10 py-4 tracking-wide transition-colors',
+            isDark
+              ? 'bg-gold text-navy hover:bg-gold-light'
+              : 'bg-navy text-white hover:bg-navy-light',
+          ]}
+        >
+          {cta1Texte}
+        </a>
+        {cta2Texte && cta2Href && (
+          <a
+            href={cta2Href}
+            class:list={[
+              'inline-flex items-center justify-center font-sans font-semibold text-sm px-10 py-4 border tracking-wide transition-colors',
+              isDark
+                ? 'border-white/30 text-white/80 hover:border-white hover:text-white'
+                : 'border-navy/30 text-navy hover:border-navy',
+            ]}
+          >
+            {cta2Texte}
+          </a>
+        )}
+      </div>
+
+    </div>
+  </section>
+)}

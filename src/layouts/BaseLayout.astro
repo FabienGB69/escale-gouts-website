@@ -1,0 +1,44 @@
+---
+import SEO from '../components/SEO.astro'
+import Navbar from '../components/Navbar.astro'
+import Footer from '../components/Footer.astro'
+import FloatingContact from '../components/FloatingContact.astro'
+import '../styles/global.css'
+
+interface Props {
+  titre:        string
+  description:  string
+  image?:       string
+  type?:        'website' | 'article'
+  localSchema?: { ville: string; service?: string }
+}
+
+const { titre, description, image, type, localSchema } = Astro.props
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon"   href="/favicon.ico" />
+    <link rel="icon" type="image/png"      href="/favicon.png" sizes="512x512" />
+    <link rel="icon" type="image/svg+xml"  href="/favicon.svg" />
+    <link rel="apple-touch-icon"           href="/favicon.png" />
+    <SEO
+      titre={titre}
+      description={description}
+      image={image}
+      type={type}
+      localSchema={localSchema}
+    />
+  </head>
+  <body class="font-sans antialiased">
+    <Navbar />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <FloatingContact />
+  </body>
+</html>

@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/Hero.astro'
+
+const valeurs = [
+  {
+    icon: '🤝',
+    titre: 'Proximité',
+    desc: 'Nous sommes sur place dans vos secteurs. Pas de gestion à distance approximative : vos logements sont connus, inspectés, et choyés.',
+  },
+  {
+    icon: '💎',
+    titre: 'Qualité hôtelière',
+    desc: 'Linge premium, logements impeccables, accueil personnalisé. Vos voyageurs repartent avec 5 étoiles en tête.',
+  },
+  {
+    icon: '📣',
+    titre: 'Transparence totale',
+    desc: 'Commission unique de 22% TTC, reporting mensuel détaillé, aucun frais caché. Vous savez toujours où en est votre bien.',
+  },
+  {
+    icon: '📈',
+    titre: 'Optimisation revenue',
+    desc: 'Tarification dynamique, multi-plateformes, annonces optimisées SEO. Votre logement tourne au maximum de son potentiel.',
+  },
+]
+
+const chiffres = [
+  { valeur: '22%', label: 'Frais de gestion TTC · tout inclus' },
+  { valeur: '75%', label: 'Taux d\'occupation moyen atteint' },
+  { valeur: '7j/7', label: 'Disponibilité pour vos voyageurs' },
+  { valeur: 'Sud Lyon', label: 'Zone d\'expertise exclusive' },
+]
+---
+
+<BaseLayout
+  titre="À propos — Escale et Goûts Conciergerie"
+  description="Découvrez l'histoire et les valeurs d'Escale et Goûts, conciergerie Airbnb spécialisée sur Vienne, Saint-Priest, Annonay et le sud de Lyon."
+>
+
+  <Hero
+    fond="cream"
+    titre="À propos d'Escale et Goûts"
+    texte="Une conciergerie à taille humaine, née de la passion de l'hospitalité et de la connaissance profonde du territoire sud lyonnais."
+    cta1Texte="Nous contacter"
+    cta1Href="/contact/"
+  />
+
+  <!-- Histoire -->
+  <section class="bg-white py-20">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+
+        <div>
+          <p class="text-gold text-xs font-bold tracking-widest uppercase mb-3">Notre histoire</p>
+          <h2 class="font-serif text-3xl text-navy mb-5">Née du territoire,<br>pour le territoire</h2>
+          <p class="text-text/65 leading-relaxed mb-4">
+            Escale et Goûts est une conciergerie de locations courte durée implantée dans le sud de Lyon. Nous accompagnons les propriétaires de Vienne, Saint-Priest, Annonay et de toute la périphérie lyonnaise dans la gestion complète de leurs logements Airbnb.
+          </p>
+          <p class="text-text/65 leading-relaxed mb-4">
+            Notre mission : vous permettre de profiter des revenus de votre bien sans en subir les contraintes. De l'accueil des voyageurs au ménage en passant par l'optimisation de vos annonces, nous gérons tout — avec exigence et bienveillance.
+          </p>
+          <p class="text-text/65 leading-relaxed">
+            Anciennement connue sous le nom de Feliada BNB Services, nous avons recentré notre activité sur la conciergerie pour vous offrir un service 100% dédié à la performance de votre logement locatif.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          {chiffres.map(c => (
+            <div class="bg-cream rounded-2xl p-5 text-center">
+              <p class="font-serif text-3xl text-gold font-bold">{c.valeur}</p>
+              <p class="text-text/50 text-xs mt-1">{c.label}</p>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Valeurs -->
+  <section class="bg-cream py-20">
+    <div class="max-w-5xl mx-auto px-4">
+
+      <div class="text-center mb-12">
+        <p class="text-gold text-xs font-bold tracking-widest uppercase mb-2">Ce qui nous guide</p>
+        <h2 class="font-serif text-3xl text-navy">Nos valeurs</h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {valeurs.map(v => (
+          <div class="bg-white rounded-2xl p-6 border border-navy/5 hover:shadow-md transition-shadow">
+            <div class="text-4xl mb-3">{v.icon}</div>
+            <h3 class="font-serif text-navy text-lg font-semibold mb-2">{v.titre}</h3>
+            <p class="text-text/55 text-sm leading-relaxed">{v.desc}</p>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Zone d'intervention -->
+  <section class="bg-navy py-16">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <p class="text-gold text-xs font-bold tracking-widest uppercase mb-3">Zone d'intervention</p>
+      <h2 class="font-serif text-3xl text-white mb-5">Conciergerie de proximité</h2>
+      <p class="text-white/50 leading-relaxed mb-8">
+        Nous intervenons exclusivement dans le <strong class="text-white/80">sud de l'agglomération lyonnaise</strong> : Vienne (38), Saint-Priest (69), Annonay (07) et toute la périphérie sud de Lyon. Cette concentration nous permet d'être réactifs et de bien connaître le marché locatif local.
+      </p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        {['Vienne (38)', 'Saint-Priest (69)', 'Annonay (07)', 'Sud Lyon (69)', 'Echirolles', 'Bourgoin-Jallieu'].map(z => (
+          <span class="bg-white/10 border border-white/15 text-white/70 px-4 py-2 rounded-full text-sm">{z}</span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="bg-cream py-16">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <h2 class="font-serif text-3xl text-navy mb-4">Travaillons ensemble</h2>
+      <p class="text-text/60 mb-8">Contactez-nous pour discuter de votre projet de mise en location.</p>
+      <a href="/contact/" class="inline-block bg-gold text-navy font-bold px-10 py-4 rounded-full hover:bg-gold-light transition-colors">
+        Prendre contact →
+      </a>
+    </div>
+  </section>
+
+</BaseLayout>
