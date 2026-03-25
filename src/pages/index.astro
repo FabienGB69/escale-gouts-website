@@ -4,6 +4,7 @@ import Hero from '../components/Hero.astro'
 import EstimateurGain from '../components/EstimateurGain.astro'
 import LogementCard from '../components/LogementCard.astro'
 import TestimonialCard from '../components/TestimonialCard.astro'
+import AvisGoogle from '../components/AvisGoogle.astro'
 import { getCollection } from 'astro:content'
 
 const logements   = (await getCollection('logements', e => e.data.actif)).sort((a,b) => a.data.ordre - b.data.ordre).slice(0,3)
@@ -206,6 +207,9 @@ const zones = [
       </div>
     </section>
   )}
+
+  <!-- ══════════════════════ AVIS GOOGLE ══════════════════════ -->
+  <AvisGoogle />
 
   <!-- ══════════════════════ ZONES — cartes épurées ══════════════════════ -->
   <section class="bg-navy py-24">
