@@ -102,15 +102,55 @@ const FRAIS_TTC = 22
     Frais Escale et Goûts : <span id="res-frais" class="text-white/50"></span> /an
   </p>
 
-  <!-- CTA -->
-  <div class="mt-10 text-center">
-    <a
-      href="/contact/"
-      class="inline-block bg-gold text-navy font-bold px-9 py-4 rounded-full hover:bg-gold-light transition-colors text-base"
-    >
-      Obtenir mon devis gratuit →
-    </a>
-    <p class="text-white/30 text-xs mt-3">Sans engagement · Réponse sous 24h</p>
+  <!-- CTA audit -->
+  <div class="mt-10 text-center" id="audit-zone">
+
+    <!-- Étape 1 : bouton initial -->
+    <div id="audit-step1">
+      <button
+        id="btn-audit"
+        type="button"
+        class="inline-block bg-gold text-navy font-bold px-9 py-4 rounded-full hover:bg-gold/85 transition-colors text-base cursor-pointer"
+      >
+        Recevoir mon audit →
+      </button>
+      <p class="text-white/30 text-xs mt-3">Sans engagement · Estimation sous 24h</p>
+    </div>
+
+    <!-- Étape 2 : champ email -->
+    <div id="audit-step2" class="hidden max-w-sm mx-auto">
+      <p class="text-white/70 text-sm mb-3">Entrez votre email pour recevoir votre estimation personnalisée :</p>
+      <div class="flex gap-2">
+        <input
+          id="audit-email"
+          type="email"
+          placeholder="votre@email.fr"
+          class="flex-1 bg-white/10 text-white border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-gold transition-colors placeholder-white/30 text-sm"
+        />
+        <button
+          id="btn-valider"
+          type="button"
+          class="bg-gold text-navy font-bold px-5 py-3 rounded-xl hover:bg-gold/85 transition-colors text-sm whitespace-nowrap cursor-pointer"
+        >
+          Valider
+        </button>
+      </div>
+      <p id="audit-email-error" class="hidden text-red-400 text-xs mt-2">Veuillez entrer une adresse email valide.</p>
+    </div>
+
+    <!-- Étape 3 : confirmation -->
+    <div id="audit-step3" class="hidden">
+      <div class="inline-flex flex-col items-center gap-2">
+        <div class="w-12 h-12 bg-green-400/15 rounded-full flex items-center justify-center mb-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <p class="text-white font-semibold text-base">Demande envoyée !</p>
+        <p class="text-white/55 text-sm">Vous allez recevoir votre estimation sous 24h.</p>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -170,4 +210,64 @@ const FRAIS_TTC = 22
   document.getElementById('est-prix').addEventListener('input', calcul)
 
   calcul() // init
+
+  // ── Flow audit email ────────────────────────────────────────────
+  document.getElementById('btn-audit').addEventListener('click', () => {
+    document.getElementById('audit-step1').classList.add('hidden')
+    document.getElementById('audit-step2').classList.remove('hidden')
+    document.getElementById('audit-email').focus()
+  })
+
+  document.getElementById('btn-valider').addEventListener('click', async () => {
+    const emailInput = document.getElementById('audit-email')
+    const email = emailInput.value.trim()
+    const errorEl = document.getElementById('audit-email-error')
+
+    // Validation email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      errorEl.classList.remove('hidden')
+      emailInput.focus()
+      return
+    }
+    errorEl.classList.add('hidden')
+
+    // Récupère les valeurs du simulateur
+    const ville  = document.getElementById('est-ville').options[document.getElementById('est-ville').selectedIndex].text
+    const type   = document.getElementById('est-type').options[document.getElementById('est-type').selectedIndex].text
+    const prix   = document.getElementById('est-prix').value
+    const revenu = document.getElementById('res-avec').textContent
+
+    // Désactive le bouton pendant l'envoi
+    const btnValider = document.getElementById('btn-valider')
+    btnValider.disabled = true
+    btnValider.textContent = '...'
+
+    // Envoi vers l'API contact
+    try {
+      const formData = new FormData()
+      formData.append('nom',    'Demande audit simulateur')
+      formData.append('email',  email)
+      formData.append('ville',  ville)
+      formData.append('nb_logements', '1')
+      formData.append('message',
+        `Demande d'audit via le simulateur de revenus.\n` +
+        `Type de bien : ${type}\n` +
+        `Prix/nuit : ${prix} €\n` +
+        `Estimation revenu net : ${revenu}`
+      )
+      await fetch('/api/contact', { method: 'POST', body: formData })
+    } catch (_) {
+      // Affiche la confirmation même si l'API échoue (Resend pas encore configuré)
+    }
+
+    // Affiche la confirmation
+    document.getElementById('audit-step2').classList.add('hidden')
+    document.getElementById('audit-step3').classList.remove('hidden')
+  })
+
+  // Valider aussi avec la touche Entrée
+  document.getElementById('audit-email').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('btn-valider').click()
+  })
 </script>
