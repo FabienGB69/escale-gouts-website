@@ -17,7 +17,7 @@ interface Props {
   }
 }
 const { logement } = Astro.props
-const { titre, ville, quartier, capacite, superficie, services, image, airbnb_url, airbnb_id, booking_url } = logement.data
+const { titre, ville, quartier, capacite, superficie, services, image, airbnb_url, booking_url } = logement.data
 ---
 
 <article class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow group flex flex-col">
@@ -97,24 +97,6 @@ const { titre, ville, quartier, capacite, superficie, services, image, airbnb_ur
         <span class="text-text/30 text-xs italic">Annonce bientôt disponible</span>
       )}
     </div>
-
-    <!-- Widget embed Airbnb -->
-    {airbnb_id && (
-      <div class="mt-4 pt-4 border-t border-navy/5 -mx-5 px-5">
-        <div
-          class="airbnb-embed-frame rounded-xl overflow-hidden"
-          data-id={airbnb_id}
-          data-view="home"
-          data-hide-price="true"
-          style="width:100%; height:280px;"
-        >
-          <a href={airbnb_url} target="_blank" rel="noopener noreferrer">
-            Voir sur Airbnb
-          </a>
-        </div>
-        <script async src="https://www.airbnb.fr/embeddable/airbnb_jssdk"></script>
-      </div>
-    )}
 
   </div>
 </article>
