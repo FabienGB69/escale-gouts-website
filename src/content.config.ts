@@ -13,9 +13,6 @@ const logements = defineCollection({
     services:   z.array(z.string()),
     image:       z.string(),
     accroche:    z.string().optional(),          // Phrase d'accroche affichée sur la carte
-    chambres:    z.number().optional(),          // Nombre de chambres
-    lits:        z.number().optional(),          // Nombre de lits
-    salles_de_bain: z.number().optional(),       // Nombre de salles de bain
     airbnb_url:  z.string().url().optional(),   // Lien cliquable vers l'annonce Airbnb
     airbnb_id:   z.string().optional(),         // ID Airbnb pour le widget embed
     booking_url: z.string().url().optional(),   // Lien Booking.com optionnel
