@@ -17,7 +17,7 @@ interface Props {
   }
 }
 const { logement } = Astro.props
-const { titre, ville, quartier, capacite, superficie, services, image, airbnb_url, booking_url } = logement.data
+const { titre, ville, quartier, capacite, superficie, services, image, airbnb_url, airbnb_id, booking_url } = logement.data
 ---
 
 <article class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow group flex flex-col">
@@ -67,36 +67,23 @@ const { titre, ville, quartier, capacite, superficie, services, image, airbnb_ur
       )}
     </ul>
 
-    <!-- Boutons plateformes -->
-    <div class="mt-auto flex flex-wrap gap-2 pt-2 border-t border-navy/5">
-      {airbnb_url && (
-        <a
-          href={airbnb_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 bg-[#FF5A5F] text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-[#e04e53] transition-colors"
+    <!-- Widget embed Airbnb -->
+    {airbnb_id && (
+      <div class="mt-4 pt-4 border-t border-navy/5 -mx-5 px-5">
+        <div
+          class="airbnb-embed-frame rounded-xl overflow-hidden"
+          data-id={airbnb_id}
+          data-view="home"
+          data-hide-price="true"
+          style="width:100%; height:280px;"
         >
-          <!-- Airbnb logo simplifié -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24">
-            <path d="M12 .001C5.373.001 0 5.372 0 12s5.373 11.999 12 11.999S24 18.628 24 12 18.627.001 12 .001zm0 3.2c1.116 0 2.026.91 2.026 2.026S13.116 7.253 12 7.253 9.974 6.343 9.974 5.227 10.884 3.201 12 3.201zm5.4 13.68c-.097.315-.365.53-.694.53H7.294a.728.728 0 01-.694-.53c-.097-.315.045-.644.336-.815l1.836-1.058a.739.739 0 01.74.014c.494.308 1.063.47 1.653.47h1.67c.59 0 1.16-.162 1.653-.47a.738.738 0 01.74-.014l1.836 1.058c.29.171.433.5.336.815zM12 15.6c-1.82 0-3.36-1.16-3.908-2.784l-.887-2.649a.727.727 0 01.457-.914.727.727 0 01.914.457l.887 2.649c.35 1.045 1.328 1.749 2.427 1.749s2.077-.704 2.427-1.749l.887-2.649a.727.727 0 01.914-.457.727.727 0 01.457.914l-.887 2.649C15.36 14.44 13.82 15.6 12 15.6z"/>
-          </svg>
-          Voir sur Airbnb
-        </a>
-      )}
-      {booking_url && (
-        <a
-          href={booking_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 bg-[#003580] text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-[#00275f] transition-colors"
-        >
-          🏨 Booking.com
-        </a>
-      )}
-      {!airbnb_url && !booking_url && (
-        <span class="text-text/30 text-xs italic">Annonce bientôt disponible</span>
-      )}
-    </div>
+          <a href={airbnb_url} target="_blank" rel="noopener noreferrer">
+            Voir sur Airbnb
+          </a>
+        </div>
+        <script async src="https://www.airbnb.fr/embeddable/airbnb_jssdk"></script>
+      </div>
+    )}
 
   </div>
 </article>
