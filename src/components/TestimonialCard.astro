@@ -7,12 +7,27 @@ interface Props {
       note:      number
       type_bien?: string
       texte:     string
+      date?:     string
     }
   }
 }
 const { temoignage } = Astro.props
-const { nom, ville, note, type_bien, texte } = temoignage.data
+const { nom, ville, note, type_bien, texte, date } = temoignage.data
 const etoiles = '★'.repeat(note) + '☆'.repeat(5 - note)
+
+// Formater la date : "2026-03-26" ou "2026-03" → "Publié le 26 mars 2026" / "mars 2026"
+const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre']
+function formatDate(d: string): string {
+  const parts = d.split('-')
+  const annee = parts[0]
+  const mois  = MOIS[parseInt(parts[1], 10) - 1] ?? ''
+  if (parts[2]) {
+    const jour = parseInt(parts[2], 10)
+    return `Publié le ${jour} ${mois} ${annee}`
+  }
+  return `${mois.charAt(0).toUpperCase() + mois.slice(1)} ${annee}`
+}
+const dateLabel = date ? formatDate(date) : null
 ---
 
 <blockquote class="bg-white rounded-2xl p-7 shadow-sm border border-navy/5 flex flex-col gap-4">
@@ -36,6 +51,9 @@ const etoiles = '★'.repeat(note) + '☆'.repeat(5 - note)
       <p class="text-text/50 text-xs">
         Propriétaire · {ville}{type_bien ? ` · ${type_bien}` : ''}
       </p>
+      {dateLabel && (
+        <p class="text-text/30 text-xs mt-0.5">{dateLabel}</p>
+      )}
     </div>
   </footer>
 </blockquote>
