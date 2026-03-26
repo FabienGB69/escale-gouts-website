@@ -5,12 +5,11 @@ export const prerender = false
 
 const resend = new Resend(import.meta.env.RESEND_API_KEY)
 
+const NOTION_DB_ID   = 'be89ef0348264fa3924ccb34602d06e2'
+const NOTION_DB_URL  = 'https://www.notion.so/be89ef0348264fa3924ccb34602d06e2'
+
 const ETOILES: Record<string, string> = {
-  '1': '⭐',
-  '2': '⭐⭐',
-  '3': '⭐⭐⭐',
-  '4': '⭐⭐⭐⭐',
-  '5': '⭐⭐⭐⭐⭐',
+  '1': '⭐',  '2': '⭐⭐',  '3': '⭐⭐⭐',  '4': '⭐⭐⭐⭐',  '5': '⭐⭐⭐⭐⭐',
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -24,19 +23,47 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (!nom || !texte || !note) {
     return new Response(JSON.stringify({ error: 'Champs requis manquants' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
+      status: 400, headers: { 'Content-Type': 'application/json' },
     })
   }
 
-  const noteNum   = parseInt(note, 10)
-  const etoiles   = ETOILES[note] ?? '⭐'
+  const noteNum     = parseInt(note, 10)
+  const etoiles     = ETOILES[note] ?? '⭐'
   const profilLabel = profil === 'voyageur' ? '🧳 Voyageur' : '🏠 Propriétaire'
 
+  // ── 1. Créer l'entrée Notion ──────────────────────────────────────────────
+  const notionKey = import.meta.env.NOTION_API_KEY
+  if (notionKey) {
+    try {
+      await fetch('https://api.notion.com/v1/pages', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${notionKey}`,
+          'Content-Type':  'application/json',
+          'Notion-Version': '2022-06-28',
+        },
+        body: JSON.stringify({
+          parent: { database_id: NOTION_DB_ID },
+          properties: {
+            'Nom':    { title:     [{ text: { content: nom } }] },
+            'Statut': { select:    { name: '⏳ En attente' } },
+            'Profil': { select:    { name: profilLabel } },
+            'Note':   { number:    noteNum },
+            'Ville':  { rich_text: [{ text: { content: ville || '' } }] },
+            'Avis':   { rich_text: [{ text: { content: texte } }] },
+          },
+        }),
+      })
+    } catch (e) {
+      console.error('Notion error:', e)
+    }
+  }
+
+  // ── 2. Envoyer l'email de notification ────────────────────────────────────
   try {
     await resend.emails.send({
-      from: 'Site Web Escale et Goûts <contact@escaleetgouts.fr>',
-      to:   'escaleetgouts@gmail.com',
+      from:    'Site Web Escale et Goûts <contact@escaleetgouts.fr>',
+      to:      'escaleetgouts@gmail.com',
       subject: `⭐ Nouvel avis à valider — ${nom} (${note}/5)`,
       html: `
         <div style="font-family:Arial,sans-serif; max-width:600px; color:#2C2C2C;">
@@ -62,9 +89,8 @@ export const POST: APIRoute = async ({ request }) => {
                 <td style="padding:10px 0; border-bottom:1px solid #f5f5f5; color:#888; font-size:13px;">Nom</td>
                 <td style="padding:10px 0; border-bottom:1px solid #f5f5f5; font-size:14px; font-weight:bold;">${nom}</td>
               </tr>
-              ${ville ? `
-              <tr>
-                <td style="padding:10px 0; border-bottom:1px solid #f5f5f5; color:#888; font-size:13px;">Ville / Logement</td>
+              ${ville ? `<tr>
+                <td style="padding:10px 0; border-bottom:1px solid #f5f5f5; color:#888; font-size:13px;">Ville</td>
                 <td style="padding:10px 0; border-bottom:1px solid #f5f5f5; font-size:14px;">${ville}</td>
               </tr>` : ''}
               <tr>
@@ -75,17 +101,17 @@ export const POST: APIRoute = async ({ request }) => {
               </tr>
             </table>
 
-            <div style="margin-top:28px; padding:16px 20px; background:#f0f7f0; border-radius:8px; border-left:3px solid #4CAF50;">
-              <p style="margin:0 0 8px; font-size:13px; font-weight:bold; color:#2e7d32;">✅ Pour publier cet avis</p>
-              <p style="margin:0; font-size:13px; color:#555; line-height:1.6;">
-                Ajoutez-le dans <code style="background:#e8f5e9; padding:2px 6px; border-radius:4px;">src/content/temoignages/</code>
-                en créant un fichier MDX avec ces données.
-              </p>
+            <div style="margin-top:28px; padding:16px 20px; background:#E8F0FE; border-radius:8px; border-left:3px solid #1B2E5E; text-align:center;">
+              <p style="margin:0 0 12px; font-size:13px; font-weight:bold; color:#1B2E5E;">Valider ou refuser dans Notion</p>
+              <a href="${NOTION_DB_URL}" style="display:inline-block; background:#1B2E5E; color:white; text-decoration:none; padding:10px 24px; border-radius:6px; font-size:13px; font-weight:bold;">
+                Ouvrir la base Notion →
+              </a>
             </div>
 
-            <div style="margin-top:12px; padding:16px 20px; background:#fff8e1; border-radius:8px; border-left:3px solid #C9983A;">
+            <div style="margin-top:12px; padding:14px 20px; background:#fff8e1; border-radius:8px; border-left:3px solid #C9983A;">
               <p style="margin:0; font-size:12px; color:#888;">
                 🕐 Reçu le ${new Date().toLocaleDateString('fr-FR', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' })}
+                · Changez le statut en ✅ Validé pour publication automatique
               </p>
             </div>
           </div>
@@ -94,14 +120,12 @@ export const POST: APIRoute = async ({ request }) => {
     })
 
     return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      status: 200, headers: { 'Content-Type': 'application/json' },
     })
   } catch (err) {
     console.error('Erreur Resend avis:', err)
     return new Response(JSON.stringify({ error: 'Échec envoi' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      status: 500, headers: { 'Content-Type': 'application/json' },
     })
   }
 }
