@@ -1,0 +1,336 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { getCollection } from 'astro:content'
+
+const temoignages = await getCollection('temoignages')
+const notesMoyenne = temoignages.length
+  ? (temoignages.reduce((acc, t) => acc + t.data.note, 0) / temoignages.length).toFixed(1)
+  : '5.0'
+
+// JSON-LD AggregateRating + Reviews pour SEO
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Escale et Goûts Conciergerie",
+  "url": "https://www.escaleetgouts.fr",
+  "telephone": "+33641086633",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Vienne",
+    "addressRegion": "Auvergne-Rhône-Alpes",
+    "addressCountry": "FR"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": notesMoyenne,
+    "bestRating": "5",
+    "worstRating": "1",
+    "ratingCount": String(temoignages.length || 1)
+  },
+  "review": temoignages.map(t => ({
+    "@type": "Review",
+    "author": { "@type": "Person", "name": t.data.nom },
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": String(t.data.note),
+      "bestRating": "5"
+    },
+    "reviewBody": t.data.texte,
+    "datePublished": t.data.date ?? "2024-01-01"
+  }))
+}
+---
+
+<BaseLayout
+  titre="Laisser un avis — Escale et Goûts Conciergerie"
+  description="Partagez votre expérience avec Escale et Goûts, conciergerie Airbnb sur Vienne (38), Saint-Priest (69) et le sud de Lyon. Votre avis aide d'autres propriétaires et voyageurs."
+>
+
+  <!-- JSON-LD SEO -->
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- HERO -->
+  <section class="bg-navy pt-24 pb-16">
+    <div class="max-w-3xl mx-auto px-6 text-center">
+      <span class="label-luxury text-gold/60 block mb-4">Votre expérience compte</span>
+      <h1 class="font-serif text-4xl md:text-5xl text-white leading-tight mb-5">
+        Partagez votre avis
+      </h1>
+      <span class="divider-gold mx-auto mb-6"></span>
+      <p class="font-sans text-white/50 text-sm leading-relaxed max-w-xl mx-auto">
+        Propriétaire ou voyageur, votre retour d'expérience aide notre communauté et améliore notre service.
+        Chaque avis est lu et validé avant publication.
+      </p>
+    </div>
+  </section>
+
+  <!-- STATS SOCIALES -->
+  <section class="bg-cream-dark py-10">
+    <div class="max-w-3xl mx-auto px-6">
+      <div class="grid grid-cols-3 divide-x divide-navy/10 bg-white rounded-2xl shadow-sm overflow-hidden border border-navy/5">
+        <div class="py-8 px-6 text-center">
+          <p class="font-serif text-gold text-3xl font-light">{notesMoyenne}</p>
+          <p class="font-sans text-text/40 text-xs mt-1 tracking-wide">Note moyenne</p>
+        </div>
+        <div class="py-8 px-6 text-center">
+          <p class="font-serif text-gold text-3xl font-light">{temoignages.length}</p>
+          <p class="font-sans text-text/40 text-xs mt-1 tracking-wide">Avis publiés</p>
+        </div>
+        <div class="py-8 px-6 text-center">
+          <p class="font-serif text-gold text-3xl font-light">24h</p>
+          <p class="font-sans text-text/40 text-xs mt-1 tracking-wide">Délai de validation</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORMULAIRE -->
+  <section class="bg-cream py-16">
+    <div class="max-w-2xl mx-auto px-6">
+
+      <!-- Carte formulaire -->
+      <div class="bg-white rounded-2xl shadow-sm border border-navy/5 overflow-hidden">
+
+        <div class="bg-navy/3 border-b border-navy/6 px-8 py-5">
+          <h2 class="font-serif text-navy text-xl">Votre avis</h2>
+          <p class="font-sans text-text/50 text-xs mt-1">Tous les champs marqués * sont obligatoires</p>
+        </div>
+
+        <form id="avis-form" class="px-8 py-8 flex flex-col gap-6">
+
+          <!-- Profil -->
+          <div>
+            <p class="font-sans text-xs font-semibold tracking-widest uppercase text-navy/60 mb-3">
+              Vous êtes *
+            </p>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="profil-card cursor-pointer">
+                <input type="radio" name="profil" value="proprietaire" class="sr-only" checked />
+                <div class="profil-box border-2 border-navy/10 rounded-xl p-4 text-center hover:border-gold transition-all">
+                  <span class="text-2xl block mb-2">🏠</span>
+                  <span class="font-sans text-sm font-semibold text-navy">Propriétaire</span>
+                  <p class="font-sans text-xs text-text/45 mt-1">Je confie mon logement</p>
+                </div>
+              </label>
+              <label class="profil-card cursor-pointer">
+                <input type="radio" name="profil" value="voyageur" class="sr-only" />
+                <div class="profil-box border-2 border-navy/10 rounded-xl p-4 text-center hover:border-gold transition-all">
+                  <span class="text-2xl block mb-2">🧳</span>
+                  <span class="font-sans text-sm font-semibold text-navy">Voyageur</span>
+                  <p class="font-sans text-xs text-text/45 mt-1">J'ai séjourné dans un logement</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Note étoiles -->
+          <div>
+            <p class="font-sans text-xs font-semibold tracking-widest uppercase text-navy/60 mb-3">
+              Votre note *
+            </p>
+            <div class="flex items-center gap-2" id="star-rating">
+              {[1,2,3,4,5].map(n => (
+                <button
+                  type="button"
+                  data-star={n}
+                  class="star-btn text-4xl text-navy/15 hover:text-gold transition-colors focus:outline-none"
+                  aria-label={`${n} étoile${n > 1 ? 's' : ''}`}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            <input type="hidden" name="note" id="note-value" value="" required />
+            <p id="note-label" class="font-sans text-xs text-text/40 mt-2 h-4"></p>
+          </div>
+
+          <!-- Nom -->
+          <div>
+            <label class="font-sans text-xs font-semibold tracking-widest uppercase text-navy/60 block mb-2">
+              Votre prénom et initiale *
+            </label>
+            <input
+              type="text"
+              name="nom"
+              placeholder="Ex : Sophie M."
+              required
+              class="w-full border border-navy/15 rounded-xl px-4 py-3 font-sans text-sm text-navy placeholder:text-text/30 focus:outline-none focus:border-gold transition-colors"
+            />
+          </div>
+
+          <!-- Ville -->
+          <div>
+            <label class="font-sans text-xs font-semibold tracking-widest uppercase text-navy/60 block mb-2">
+              Ville ou logement
+            </label>
+            <input
+              type="text"
+              name="ville"
+              placeholder="Ex : Vienne, Saint-Priest…"
+              class="w-full border border-navy/15 rounded-xl px-4 py-3 font-sans text-sm text-navy placeholder:text-text/30 focus:outline-none focus:border-gold transition-colors"
+            />
+          </div>
+
+          <!-- Texte avis -->
+          <div>
+            <label class="font-sans text-xs font-semibold tracking-widest uppercase text-navy/60 block mb-2">
+              Votre avis *
+            </label>
+            <textarea
+              name="texte"
+              rows="5"
+              required
+              minlength="30"
+              placeholder="Décrivez votre expérience avec Escale et Goûts…"
+              class="w-full border border-navy/15 rounded-xl px-4 py-3 font-sans text-sm text-navy placeholder:text-text/30 focus:outline-none focus:border-gold transition-colors resize-none"
+            ></textarea>
+            <p class="font-sans text-text/35 text-xs mt-1">Minimum 30 caractères</p>
+          </div>
+
+          <!-- Mention RGPD -->
+          <p class="font-sans text-text/35 text-xs leading-relaxed border-t border-navy/6 pt-4">
+            En soumettant cet avis, vous acceptez qu'il soit affiché sur ce site après validation manuelle.
+            Aucune donnée personnelle n'est conservée sans votre consentement.
+          </p>
+
+          <!-- Submit -->
+          <div id="avis-step1">
+            <button
+              type="submit"
+              class="w-full bg-navy text-white font-sans font-semibold text-sm px-8 py-4 rounded-full hover:bg-coral transition-colors"
+            >
+              Envoyer mon avis →
+            </button>
+          </div>
+
+          <!-- Confirmation -->
+          <div id="avis-confirm" class="hidden text-center py-4">
+            <div class="text-4xl mb-3">🎉</div>
+            <h3 class="font-serif text-navy text-xl mb-2">Merci pour votre avis !</h3>
+            <p class="font-sans text-text/55 text-sm leading-relaxed">
+              Il sera examiné et publié dans les 24h si validé.
+              Votre retour nous aide à nous améliorer et aide d'autres personnes à nous choisir.
+            </p>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Pourquoi laisser un avis -->
+      <div class="mt-10 grid md:grid-cols-3 gap-4">
+        {[
+          { icon: '🔍', titre: 'Aide à la décision', desc: 'Votre avis guide les futurs propriétaires dans leur choix.' },
+          { icon: '📈', titre: 'Améliore le service', desc: 'Chaque retour nous aide à progresser et mieux vous servir.' },
+          { icon: '🤝', titre: 'Communauté de confiance', desc: 'Des avis authentiques, validés manuellement, pas de faux avis.' },
+        ].map(item => (
+          <div class="bg-white rounded-xl border border-navy/6 p-5 text-center">
+            <span class="text-2xl block mb-2">{item.icon}</span>
+            <h3 class="font-serif text-navy text-sm font-semibold mb-1">{item.titre}</h3>
+            <p class="font-sans text-text/45 text-xs leading-relaxed">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA voir les avis -->
+  <section class="bg-navy py-14">
+    <div class="max-w-2xl mx-auto px-6 text-center">
+      <p class="font-sans text-white/40 text-xs tracking-widest uppercase mb-4">Déjà {temoignages.length} avis publiés</p>
+      <a
+        href="/temoignages/"
+        class="inline-flex items-center gap-3 font-sans text-xs font-semibold tracking-widest uppercase text-white border border-white/20 px-8 py-4 rounded-full hover:border-gold hover:text-gold transition-colors"
+      >
+        Lire tous les témoignages →
+      </a>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .profil-card input:checked + .profil-box {
+    border-color: #C9983A;
+    background: #FAF6EF;
+  }
+</style>
+
+<script>
+  // Étoiles interactives
+  const stars     = document.querySelectorAll<HTMLButtonElement>('.star-btn')
+  const noteInput = document.getElementById('note-value') as HTMLInputElement
+  const noteLabel = document.getElementById('note-label') as HTMLParagraphElement
+
+  const labels: Record<number, string> = {
+    1: 'Décevant',
+    2: 'Passable',
+    3: 'Correct',
+    4: 'Très bien',
+    5: 'Excellent — parfait !',
+  }
+
+  function setStars(n: number) {
+    stars.forEach(s => {
+      const v = Number(s.dataset.star)
+      s.classList.toggle('text-gold', v <= n)
+      s.classList.toggle('text-navy/15', v > n)
+    })
+    noteInput.value = String(n)
+    noteLabel.textContent = labels[n] ?? ''
+  }
+
+  stars.forEach(btn => {
+    btn.addEventListener('click', () => setStars(Number(btn.dataset.star)))
+    btn.addEventListener('mouseenter', () => {
+      const n = Number(btn.dataset.star)
+      stars.forEach(s => {
+        const v = Number(s.dataset.star)
+        s.classList.toggle('text-gold', v <= n)
+        s.classList.toggle('text-navy/15', v > n)
+      })
+    })
+  })
+
+  document.getElementById('star-rating')?.addEventListener('mouseleave', () => {
+    const current = Number(noteInput.value)
+    if (current) setStars(current)
+    else stars.forEach(s => {
+      s.classList.remove('text-gold')
+      s.classList.add('text-navy/15')
+    })
+  })
+
+  // Soumission formulaire
+  const form    = document.getElementById('avis-form') as HTMLFormElement
+  const step1   = document.getElementById('avis-step1')!
+  const confirm = document.getElementById('avis-confirm')!
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault()
+
+    if (!noteInput.value) {
+      noteLabel.textContent = '⚠ Veuillez sélectionner une note'
+      noteLabel.classList.add('text-coral')
+      return
+    }
+
+    const btn = step1.querySelector('button') as HTMLButtonElement
+    btn.textContent = 'Envoi en cours…'
+    btn.disabled = true
+
+    const fd = new FormData(form)
+    await fetch('/api/avis', {
+      method: 'POST',
+      headers: {
+        'Origin':  window.location.origin,
+        'Referer': window.location.href,
+      },
+      body: fd,
+    })
+
+    // Toujours confirmer (même si erreur réseau)
+    step1.classList.add('hidden')
+    confirm.classList.remove('hidden')
+  })
+</script>
