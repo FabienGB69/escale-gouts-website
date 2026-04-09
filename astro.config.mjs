@@ -8,7 +8,9 @@ import vercel from '@astrojs/vercel'
 export default defineConfig({
   site: 'https://www.escaleetgouts.fr',
   output: 'static', // statique par défaut, /api/contact utilise prerender:false pour SSR
-  adapter: vercel(),
+  adapter: vercel({
+    webAnalytics: { enabled: true }
+  }),
   integrations: [
     mdx(),
     sitemap(),
