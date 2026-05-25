@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # agentmemory runtime data
 data/
+
+# Vercel local build output
+.vercel/
