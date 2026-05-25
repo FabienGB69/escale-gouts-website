@@ -1,0 +1,5 @@
+# Fichiers de runtime local — ne pas déployer
+data/
+.env
+.env.local
+node_modules/
