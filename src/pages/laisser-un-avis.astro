@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import { getCollection } from 'astro:content'
 
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY
+
 const temoignages = await getCollection('temoignages')
 const notesMoyenne = temoignages.length
   ? (temoignages.reduce((acc, t) => acc + t.data.note, 0) / temoignages.length).toFixed(1)
@@ -98,6 +100,18 @@ const jsonLd = {
 
         <form id="avis-form" class="px-8 py-8 flex flex-col gap-6">
 
+          <!-- Honeypot anti-bot — ne pas modifier -->
+          <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;opacity:0;height:0;overflow:hidden;">
+            <label for="website">Ne pas remplir</label>
+            <input
+              type="text"
+              id="website"
+              name="website"
+              tabindex="-1"
+              autocomplete="off"
+            />
+          </div>
+
           <!-- Profil -->
           <div>
             <p class="font-sans text-xs font-semibold tracking-widest uppercase text-navy/60 mb-3">
@@ -192,6 +206,11 @@ const jsonLd = {
             En soumettant cet avis, vous acceptez qu'il soit affiché sur ce site après validation manuelle.
             Aucune donnée personnelle n'est conservée sans votre consentement.
           </p>
+
+          <!-- Cloudflare Turnstile — squelette prêt à activer (PUBLIC_TURNSTILE_SITE_KEY dans .env) -->
+          {turnstileSiteKey && (
+            <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light"></div>
+          )}
 
           <!-- Submit -->
           <div id="avis-step1">
@@ -330,7 +349,14 @@ const jsonLd = {
     })
 
     // Toujours confirmer (même si erreur réseau)
+    // Le champ honeypot (name="website") est soumis via FormData —
+    // Leo le vérifie côté serveur : si rempli → rejet silencieux.
     step1.classList.add('hidden')
     confirm.classList.remove('hidden')
   })
 </script>
+
+<!-- Cloudflare Turnstile SDK — chargé uniquement si la clé est définie -->
+{turnstileSiteKey && (
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
