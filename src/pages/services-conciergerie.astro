@@ -190,6 +190,34 @@ const prestations = [
     </div>
   </section>
 
+  <!-- FAQ JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Combien de logements gérez-vous minimum ?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Nous acceptons dès le premier logement. Aucun minimum requis." }
+      },
+      {
+        "@type": "Question",
+        "name": "Faut-il signer un contrat long terme ?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Non. Notre contrat est résiliable avec un préavis d'un mois. Nous misons sur la qualité pour vous fidéliser." }
+      },
+      {
+        "@type": "Question",
+        "name": "Intervenez-vous aussi pour les logements meublés longue durée ?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Notre spécialité est la courte durée (Airbnb, Booking). Pour la longue durée, contactez-nous : nous étudierons votre cas." }
+      },
+      {
+        "@type": "Question",
+        "name": "Les frais de ménage sont-ils inclus dans les 22% ?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Non, les frais de ménage sont distincts des 22 % de commission. Le règlement du voyageur étant encaissé directement par le propriétaire via la plateforme, les frais de ménage lui sont facturés séparément et régularisés lors de la facturation mensuelle." }
+      }
+    ]
+  })} />
+
   <!-- CTA form -->
   <section class="bg-navy py-20">
     <div class="max-w-2xl mx-auto px-4">
