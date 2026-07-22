@@ -22,6 +22,8 @@ const {
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 const ogImage = new URL(image, Astro.site)
 
+const titleFinal = titre.includes('Escale') ? titre : `${titre} | Escale et Goûts Conciergerie`
+
 const schemaLocalBusiness = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
@@ -29,6 +31,11 @@ const schemaLocalBusiness = {
   description: 'Service de conciergerie Airbnb professionnel — gestion locative courte durée sur mesure.',
   url: 'https://www.escaleetgouts.fr',
   email: 'escaleetgouts@gmail.com',
+  telephone: '+33641086633',
+  sameAs: [
+    'https://www.facebook.com/share/16o2DMeL3d/',
+    'https://www.instagram.com/escaleetgouts',
+  ],
   areaServed: ['Vienne', 'Saint-Priest', 'Annonay', 'Sud Lyon'],
   serviceType: 'Conciergerie Airbnb — Gestion locative courte durée',
   ...(localSchema && {
@@ -38,14 +45,14 @@ const schemaLocalBusiness = {
 ---
 
 <!-- Primaires -->
-<title>{titre} | Escale et Goûts Conciergerie</title>
+<title>{titleFinal}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalURL} />
 
 <!-- Open Graph -->
 <meta property="og:type"        content={type} />
 <meta property="og:url"         content={canonicalURL} />
-<meta property="og:title"       content={titre} />
+<meta property="og:title"       content={titleFinal} />
 <meta property="og:description" content={description} />
 <meta property="og:image"       content={ogImage} />
 <meta property="og:locale"      content="fr_FR" />
@@ -53,7 +60,7 @@ const schemaLocalBusiness = {
 
 <!-- Twitter Card -->
 <meta name="twitter:card"        content="summary_large_image" />
-<meta name="twitter:title"       content={titre} />
+<meta name="twitter:title"       content={titleFinal} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image"       content={ogImage} />
 
