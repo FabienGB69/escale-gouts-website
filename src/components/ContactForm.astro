@@ -1,5 +1,6 @@
 ---
 // Formulaire → API /api/contact → Resend → escaleetgouts@gmail.com
+const { autofocus = false } = Astro.props
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY
 ---
 
@@ -27,7 +28,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY
         Nom / Prénom *
       </label>
       <input
-        id="nom" name="nom" type="text" required autocomplete="name"
+        id="nom" name="nom" type="text" required autocomplete="name" autofocus={autofocus || undefined}
         placeholder="Jean Dupont"
         class="w-full border border-navy/20 rounded-xl px-4 py-3 text-text focus:outline-none focus:border-gold transition-colors"
       />

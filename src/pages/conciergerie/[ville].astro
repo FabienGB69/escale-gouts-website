@@ -57,7 +57,7 @@ const localSchema = {
   name: 'Escale et Goûts Conciergerie',
   description: `Conciergerie Airbnb à ${ville}${departement ? ` (${departement})` : ''} — gestion complète de vos locations courte durée.`,
   url: `https://www.escaleetgouts.fr/conciergerie/${zone.data.slug}/`,
-  telephone: '',
+  telephone: '+33641086633',
   email: 'escaleetgouts@gmail.com',
   areaServed: { '@type': 'City', name: ville },
   address: {
@@ -74,8 +74,11 @@ const localSchema = {
 <BaseLayout
   titre={titre_seo}
   description={description}
-  localSchema={localSchema}
+  localSchema={{ ville }}
 >
+
+  <!-- JSON-LD LocalBusiness spécifique à cette ville -->
+  <script type="application/ld+json" set:html={JSON.stringify(localSchema)} />
 
   <!-- Hero spécifique ville -->
   <section class="bg-navy pt-24 pb-16">

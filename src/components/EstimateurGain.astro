@@ -173,8 +173,8 @@ const FRAIS_TTC = 22
     document.getElementById('est-prix-label').textContent = prixNuit + ' €'
 
     // Calculs
-    const revenuSans  = Math.round(prixNuit * 365 * OCC_SANS)
-    const revenuBrut  = Math.round(prixNuit * 365 * OCC_AVEC)
+    const revenuSans  = Math.round(prixNuit * 365 * OCC_SANS * typeCoef)
+    const revenuBrut  = Math.round(prixNuit * 365 * OCC_AVEC * typeCoef)
     const frais       = Math.round(revenuBrut * FRAIS)
     const revenuAvec  = revenuBrut - frais
     const gain        = revenuAvec - revenuSans
