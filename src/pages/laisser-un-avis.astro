@@ -353,6 +353,9 @@ const jsonLd = {
     // Leo le vérifie côté serveur : si rempli → rejet silencieux.
     step1.classList.add('hidden')
     confirm.classList.remove('hidden')
+    if (typeof window !== 'undefined' && (window as any).va) {
+      ;(window as any).va('event', { name: 'avis_submit' })
+    }
   })
 </script>
 
