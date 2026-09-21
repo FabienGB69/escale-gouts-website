@@ -30,7 +30,6 @@ const isDark  = fond === 'navy' || fond === 'image'
 ---
 
 {isSplit ? (
-  <!-- ══════════════════ MODE SPLIT — Inspiré de l'image de rebrand ══════════════════ -->
   <section class="grid md:grid-cols-2 min-h-[90vh]">
 
     <!-- Colonne texte gauche -->
@@ -78,7 +77,6 @@ const isDark  = fond === 'navy' || fond === 'image'
           class="absolute inset-0 w-full h-full object-cover"
         />
       ) : (
-        <!-- Placeholder élégant navy avec motif -->
         <div class="absolute inset-0 bg-navy flex items-center justify-center">
           <div class="text-center">
             <p class="font-serif text-white/20 text-7xl font-light tracking-widest">E&G</p>
@@ -100,7 +98,6 @@ const isDark  = fond === 'navy' || fond === 'image'
   </section>
 
 ) : (
-  <!-- ══════════════════ MODE STANDARD (navy / cream / image) ══════════════════ -->
   <section
     class:list={[
       'relative overflow-hidden py-24 md:py-32 px-6',
