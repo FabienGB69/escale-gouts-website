@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import Hero from '../../components/Hero.astro'
 import { getCollection } from 'astro:content'
 
-const articles = (await getCollection('blog', e => e.data.publie))
+const articles = (await getCollection('blog', e => e.data.publie && e.data.date <= new Date()))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 
 function formatDate(d: Date) {
